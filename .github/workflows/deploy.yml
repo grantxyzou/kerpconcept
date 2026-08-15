@@ -1,0 +1,95 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  # Nothing reaches the live site without clearing the same gates the project
+  # holds itself to locally: no horizontal overflow, no console errors, and no
+  # accessibility violations.
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      # No CHROMIUM_PATH is set here on purpose — the scripts fall back to the
+      # browser Playwright downloads, at the revision the lockfile pins.
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Build single-file bundles
+        run: node build.js
+
+      - name: Check dist/ is not stale
+        run: |
+          if ! git diff --exit-code -- dist/; then
+            echo "::error::dist/ is out of date with the source. Run 'node build.js' and commit the result."
+            exit 1
+          fi
+
+      - name: Responsive and console-error check
+        run: node scripts/shots.js
+
+      - name: Accessibility audit
+        run: node scripts/a11y.js
+
+      - name: Upload screenshots on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: screenshots
+          path: .shots/
+          if-no-files-found: ignore
+
+  deploy:
+    needs: verify
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    # Scoped to this job so parallel PR checks are not serialised behind it.
+    concurrency:
+      group: pages
+      cancel-in-progress: false
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      # Publish only what the site needs. The repo root also holds build and
+      # test tooling that has no business being served.
+      - name: Assemble the site
+        run: |
+          mkdir -p _site
+          cp index.html _site/
+          cp -r assets _site/
+          touch _site/.nojekyll
+          ls -R _site
+
+      - uses: actions/configure-pages@v5
+        with:
+          enablement: true
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+      - id: deployment
+        uses: actions/deploy-pages@v4

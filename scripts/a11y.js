@@ -16,6 +16,12 @@ const { chromium } = require('playwright');
 const { AxeBuilder } = require('@axe-core/playwright');
 const path = require('path');
 
+// Use a prebuilt Chromium when CHROMIUM_PATH points at one; otherwise let
+// Playwright resolve the browser it downloaded itself, which is what CI needs.
+const launchOptions = process.env.CHROMIUM_PATH
+  ? { executablePath: process.env.CHROMIUM_PATH }
+  : {};
+
 const FILE = 'file://' + path.join(__dirname, '..', 'dist', 'index.html');
 const TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'];
 
@@ -33,7 +39,7 @@ const CASES = [
 const TARGET_MIN = 44;
 
 (async () => {
-  const browser = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium' });
+  const browser = await chromium.launch(launchOptions);
   let violations = 0;
 
   for (const c of CASES) {
