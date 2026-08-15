@@ -1,11 +1,35 @@
 /* ==========================================================================
    Kerp Barbershop & Salon — proof of concept
-   Dark-first. Cool steel ground, brass accent, mono for anything measured.
+   Dark-first. Mono for anything measured.
    ========================================================================== */
+
+/* ==========================================================================
+   BRAND — the only block to edit when applying the real kerp.ca palette.
+   Everything else in this file reads through the tokens below it, so these
+   nine values re-skin the whole page in both themes.
+
+   --brand-dark        the dark ground (masthead, hero, footer)
+   --brand-light       the light ground
+   --brand-accent      buttons, active tabs, rules, prices — on the dark theme
+   --brand-accent-light  the same accent, darkened enough to pass contrast on
+                       the light ground. If the brand accent already reads on
+                       white, set both to the same value.
+   --brand-on-accent-*  text sitting on top of a filled accent button
+   ========================================================================== */
+:root {
+  --brand-dark:            #0D1012;
+  --brand-light:           #ECEEEE;
+  --brand-accent:          #C69B4E;
+  --brand-accent-light:    #8A6520;
+  --brand-accent-lit:      #E0BC7E;  /* hover / link state on dark */
+  --brand-accent-lit-light:#6E4F17;  /* hover / link state on light */
+  --brand-on-accent:       #12171A;
+  --brand-on-accent-light: #FCFAF5;
+}
 
 /* ---------- tokens: dark is the default ---------- */
 :root {
-  --ground:      #0D1012;
+  --ground:      var(--brand-dark);
   --ground-deep: #080A0B;
   --surface:     #14191C;
   --surface-2:   #1B2226;
@@ -14,9 +38,9 @@
   --text:        #DDE4E6;
   --text-dim:    #93A0A6;
   --text-faint:  #6B787E;
-  --brass:       #C69B4E;
-  --brass-lit:   #E0BC7E;
-  --on-brass:    #12171A;
+  --accent:      var(--brand-accent);
+  --accent-lit:  var(--brand-accent-lit);
+  --on-accent:   var(--brand-on-accent);
   --open:        #79C695;
   --shut:        #C9797A;
 
@@ -44,7 +68,7 @@
 
 @media (prefers-color-scheme: light) {
   :root:not([data-theme="dark"]) {
-    --ground:      #ECEEEE;
+    --ground:      var(--brand-light);
     --ground-deep: #DCE1E1;
     --surface:     #F7F8F8;
     --surface-2:   #DFE4E4;
@@ -53,9 +77,9 @@
     --text:        #12171A;
     --text-dim:    #556166;
     --text-faint:  #768388;
-    --brass:       #8A6520;
-    --brass-lit:   #6E4F17;
-    --on-brass:    #FCFAF5;
+    --accent:      var(--brand-accent-light);
+    --accent-lit:  var(--brand-accent-lit-light);
+    --on-accent:   var(--brand-on-accent-light);
     --open:        #2C7549;
     --shut:        #9C3B3D;
     color-scheme: light;
@@ -63,7 +87,7 @@
 }
 
 :root[data-theme="light"] {
-  --ground:      #ECEEEE;
+  --ground:      var(--brand-light);
   --ground-deep: #DCE1E1;
   --surface:     #F7F8F8;
   --surface-2:   #DFE4E4;
@@ -72,9 +96,9 @@
   --text:        #12171A;
   --text-dim:    #556166;
   --text-faint:  #768388;
-  --brass:       #8A6520;
-  --brass-lit:   #6E4F17;
-  --on-brass:    #FCFAF5;
+  --accent:      var(--brand-accent-light);
+  --accent-lit:  var(--brand-accent-lit-light);
+  --on-accent:   var(--brand-on-accent-light);
   --open:        #2C7549;
   --shut:        #9C3B3D;
   color-scheme: light;
@@ -109,7 +133,7 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 a { color: inherit; }
 
 :focus-visible {
-  outline: 2px solid var(--brass);
+  outline: 2px solid var(--accent);
   outline-offset: 3px;
   border-radius: 2px;
 }
@@ -124,7 +148,7 @@ a { color: inherit; }
   position: absolute; left: 50%; top: 0;
   transform: translate(-50%, -120%);
   z-index: 200;
-  background: var(--brass); color: var(--on-brass);
+  background: var(--accent); color: var(--on-accent);
   padding: 0.6rem 1.2rem;
   font-family: var(--font-display);
   font-size: var(--t-sm); font-weight: 700;
@@ -189,7 +213,7 @@ a { color: inherit; }
   font-size: var(--t-sm);
   font-weight: 700;
   letter-spacing: 0.01em;
-  color: var(--brass-lit);
+  color: var(--accent-lit);
   text-decoration: none;
   padding-block: 0.35rem;
 }
@@ -221,11 +245,11 @@ a { color: inherit; }
   transition: background-color 0.2s var(--ease), color 0.2s var(--ease), border-color 0.2s var(--ease);
 }
 
-.btn--brass { background: var(--brass); color: var(--on-brass); }
-.btn--brass:hover { background: var(--brass-lit); }
+.btn--accent { background: var(--accent); color: var(--on-accent); }
+.btn--accent:hover { background: var(--accent-lit); }
 
 .btn--ghost { border-color: var(--line); color: var(--text); }
-.btn--ghost:hover { border-color: var(--brass); color: var(--brass-lit); }
+.btn--ghost:hover { border-color: var(--accent); color: var(--accent-lit); }
 
 .btn--sm { min-height: 2.5rem; padding: 0 1rem; }
 .btn--block { width: 100%; }
@@ -463,7 +487,7 @@ a { color: inherit; }
   font-size: var(--t-micro);
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: var(--brass);
+  color: var(--accent);
   padding-bottom: 0.75rem;
   border-bottom: 1px solid var(--line);
 }
@@ -495,7 +519,7 @@ a { color: inherit; }
 .card__price {
   font-family: var(--font-mono);
   font-size: var(--t-sm);
-  color: var(--brass-lit);
+  color: var(--accent-lit);
   font-variant-numeric: tabular-nums;
   margin-top: 0.15rem;
 }
@@ -527,7 +551,7 @@ a { color: inherit; }
   cursor: pointer;
   transition: color 0.2s var(--ease), border-color 0.2s var(--ease);
 }
-.tab[aria-selected="true"] { color: var(--text); border-bottom-color: var(--brass); }
+.tab[aria-selected="true"] { color: var(--text); border-bottom-color: var(--accent); }
 .tab:hover { color: var(--text); }
 
 .panel { padding-top: 0.5rem; }
@@ -548,7 +572,7 @@ a { color: inherit; }
   font-family: var(--font-mono);
   font-size: var(--t-sm);
   font-variant-numeric: tabular-nums;
-  color: var(--brass-lit);
+  color: var(--accent-lit);
   white-space: nowrap;
 }
 
@@ -638,8 +662,8 @@ a { color: inherit; }
   color: var(--text-dim);
 }
 .hours__shut { color: var(--text-faint); }
-.hours tr.is-today th { color: var(--brass-lit); font-weight: 700; }
-.hours tr.is-today td { color: var(--brass-lit); }
+.hours tr.is-today th { color: var(--accent-lit); font-weight: 700; }
+.hours tr.is-today td { color: var(--accent-lit); }
 
 .addr { font-style: normal; font-size: var(--t-lede); line-height: 1.45; }
 
@@ -663,7 +687,7 @@ a { color: inherit; }
 .contact__v {
   font-family: var(--font-mono);
   font-size: var(--t-sm);
-  color: var(--brass-lit);
+  color: var(--accent-lit);
 }
 .contact a:hover .contact__v { color: var(--text); }
 
@@ -756,7 +780,7 @@ a { color: inherit; }
   text-decoration: none;
 }
 .dock__btn--call { border: 1px solid var(--line); color: var(--text); }
-.dock__btn--book { background: var(--brass); color: var(--on-brass); }
+.dock__btn--book { background: var(--accent); color: var(--on-accent); }
 
 /* ---------- reveal animation ---------- */
 .reveal {

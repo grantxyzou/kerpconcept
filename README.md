@@ -37,6 +37,20 @@ node scripts/states.js     # viewport captures of specific states, written to .s
 `shots.js` exits non-zero if the page scrolls horizontally at any viewport or if anything
 logs to the console, so it works as a pre-commit gate.
 
+## Applying the real brand palette
+
+`assets/css/kerp.css` opens with a `BRAND` block holding nine values — the dark ground,
+the light ground, the accent in its on-dark and on-light forms, their hover states, and
+the text colour that sits on a filled accent button. Every other rule in the file reads
+through the tokens beneath it, and the hero canvas reads `--accent` at runtime, so editing
+that one block re-skins the page in both themes.
+
+Two things live outside it and need a matching edit: `<meta name="theme-color">` in
+`index.html` (the phone browser chrome colour), and the neutral ramp — `--surface`,
+`--line`, `--text-dim` and friends — which currently carries a slight blue-steel bias to
+sit under the dark ground. If the brand ground moves to a different hue, nudge that ramp
+the same way so the greys don't fight it.
+
 ## What's in the design
 
 **Mobile first.** Everything is built for a 320px column and widens from there — a full

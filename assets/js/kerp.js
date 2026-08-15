@@ -172,8 +172,9 @@
   }
 
   /* ------------------------------------------------------- hero canvas */
-  // A slow diagonal drift of steel bands with the occasional brass one —
-  // the barber pole, dialled almost all the way down.
+  // A slow diagonal drift of neutral bands with the occasional accent one —
+  // the barber pole, dialled almost all the way down. Colours come from the
+  // brand tokens, so re-skinning the CSS re-skins this too.
   var canvas = document.getElementById('heroCanvas');
   var ctx = canvas.getContext && canvas.getContext('2d');
 
@@ -192,15 +193,15 @@
     var cursor = 0;
     while (cursor < PERIOD) {
       var w = 2 + rnd() * 26;
-      bands.push({ x: cursor, w: w, a: 0.012 + rnd() * 0.026, brass: rnd() > 0.86 });
+      bands.push({ x: cursor, w: w, a: 0.012 + rnd() * 0.026, accent: rnd() > 0.86 });
       cursor += w + 4 + rnd() * 34;
     }
 
     var css = getComputedStyle(document.documentElement);
-    var tint = { steel: '#ffffff', brass: '#C69B4E' };
+    var tint = { steel: '#ffffff', accent: '#C69B4E', scale: 1 };
 
     function readTint() {
-      tint.brass = (css.getPropertyValue('--brass') || '#C69B4E').trim();
+      tint.accent = (css.getPropertyValue('--accent') || '#C69B4E').trim();
       // Bands lighten a dark ground and darken a light one.
       var light = getComputedStyle(document.documentElement).colorScheme.indexOf('light') > -1;
       tint.steel = light ? '#3F4B50' : '#ffffff';
@@ -234,8 +235,8 @@
           var b = bands[i];
           var x = base + b.x + (phase % PERIOD);
           if (x > span || x < start - PERIOD) continue;
-          ctx.globalAlpha = b.a * tint.scale * (b.brass ? 1.5 : 1);
-          ctx.fillStyle = b.brass ? tint.brass : tint.steel;
+          ctx.globalAlpha = b.a * tint.scale * (b.accent ? 1.5 : 1);
+          ctx.fillStyle = b.accent ? tint.accent : tint.steel;
           ctx.fillRect(x, -span, b.w, span * 2);
         }
       }
