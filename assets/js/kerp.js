@@ -204,8 +204,8 @@
       tint.accent = (css.getPropertyValue('--accent') || '#C69B4E').trim();
       // Bands lighten a dark ground and darken a light one.
       var light = getComputedStyle(document.documentElement).colorScheme.indexOf('light') > -1;
-      tint.steel = light ? '#3F4B50' : '#ffffff';
-      tint.scale = light ? 0.5 : 1;
+      tint.steel = light ? '#3B2F30' : '#ffffff';
+      tint.scale = light ? 0.7 : 1;
     }
     readTint();
 

@@ -37,19 +37,28 @@ node scripts/states.js     # viewport captures of specific states, written to .s
 `shots.js` exits non-zero if the page scrolls horizontally at any viewport or if anything
 logs to the console, so it works as a pre-commit gate.
 
-## Applying the real brand palette
+## The palette
 
-`assets/css/kerp.css` opens with a `BRAND` block holding nine values — the dark ground,
-the light ground, the accent in its on-dark and on-light forms, their hover states, and
-the text colour that sits on a filled accent button. Every other rule in the file reads
-through the tokens beneath it, and the hero canvas reads `--accent` at runtime, so editing
-that one block re-skins the page in both themes.
+Barber red on white — `#C8102E` against a near-white `#FAFAFA` ground with near-black
+type. Light is the default theme; dark is the secondary one, where the red lifts to
+`#EE4C5E` so it still reads on `#141011`.
 
-Two things live outside it and need a matching edit: `<meta name="theme-color">` in
-`index.html` (the phone browser chrome colour), and the neutral ramp — `--surface`,
-`--line`, `--text-dim` and friends — which currently carries a slight blue-steel bias to
-sit under the dark ground. If the brand ground moves to a different hue, nudge that ramp
-the same way so the greys don't fight it.
+The red is spent in three places only: things you can act on (buttons, links, prices, the
+active tab), today's row in the hours table, and the full-bleed closing band. Section
+labels and card prices stay neutral so the accent keeps its weight. Neutrals carry a faint
+warm bias rather than being pure grey, so they sit with the red instead of fighting it.
+
+### Swapping it
+
+`assets/css/kerp.css` opens with a `BRAND` block of eight values — the two grounds, the
+red in its on-white and on-black forms, their hover states, and the text colour that sits
+on a filled red surface. Every other rule reads through the tokens beneath it, and the
+hero canvas reads `--accent` at runtime, so that one block re-skins both themes.
+
+Two things live outside it and need a matching edit: the two `<meta name="theme-color">`
+tags in `index.html` (the phone browser chrome, one per theme), and the neutral ramp —
+`--surface`, `--line`, `--text-dim` and friends. If the accent hue moves, nudge that ramp's
+bias the same way.
 
 ## What's in the design
 
@@ -67,13 +76,14 @@ has no time zone data the chip removes itself and the static table stands on its
 a proper tabbed table with tabular figures rather than a PDF link — arrow-key navigable,
 `aria-selected` wired up.
 
-**Two themes.** Dark by default, since the identity is a mirror-lit room. Every colour is
-a token, redefined for light in both the `prefers-color-scheme` media query and an
-explicit `data-theme` stamp, so the page holds up on a host that forces either one.
+**Two themes.** Light by default. Every colour is a token, redefined for dark in both the
+`prefers-color-scheme` media query and an explicit `data-theme` stamp, so the page holds
+up on a host that forces either one.
 
-**A quiet hero.** A canvas draws slowly drifting diagonal bands — the barber pole turned
-almost all the way down — at roughly 3% alpha, masked out before it reaches the text. It
-stops drawing when scrolled out of view and never starts under `prefers-reduced-motion`.
+**A quiet hero.** A canvas draws slowly drifting diagonal bands — the barber pole, dialled
+almost all the way down — at roughly 3% alpha, masked out before it reaches the text. The
+occasional band picks up the brand red. It stops drawing when scrolled out of view and
+never starts under `prefers-reduced-motion`.
 
 ## Content notes
 

@@ -2,49 +2,54 @@
 <style>
 /* ==========================================================================
    Kerp Barbershop & Salon — proof of concept
-   Dark-first. Mono for anything measured.
+   Barber red on white. Light-first, dark theme secondary.
+   Mono for anything measured.
    ========================================================================== */
 
 /* ==========================================================================
-   BRAND — the only block to edit when applying the real kerp.ca palette.
-   Everything else in this file reads through the tokens below it, so these
-   nine values re-skin the whole page in both themes.
+   BRAND — the only block to edit when applying a different palette.
+   Every other rule reads through the tokens beneath it, and the hero canvas
+   reads --accent at runtime, so these eight values re-skin both themes.
 
-   --brand-dark        the dark ground (masthead, hero, footer)
-   --brand-light       the light ground
-   --brand-accent      buttons, active tabs, rules, prices — on the dark theme
-   --brand-accent-light  the same accent, darkened enough to pass contrast on
-                       the light ground. If the brand accent already reads on
-                       white, set both to the same value.
-   --brand-on-accent-*  text sitting on top of a filled accent button
+   --brand-paper       the light ground (default theme)
+   --brand-ink         the dark ground (secondary theme)
+   --brand-red         the accent on paper — buttons, links, prices, the
+                       closing band. Needs 4.5:1 against --brand-paper.
+   --brand-red-dark    hover state on paper
+   --brand-red-lit     the same red lifted enough to read on --brand-ink
+   --brand-red-lit-hi  hover state on ink
+   --brand-on-red-*    text sitting on a filled red surface. White works on
+                       the deep red; the lifted red needs dark text instead.
    ========================================================================== */
 :root {
-  --brand-dark:            #0D1012;
-  --brand-light:           #ECEEEE;
-  --brand-accent:          #C69B4E;
-  --brand-accent-light:    #8A6520;
-  --brand-accent-lit:      #E0BC7E;  /* hover / link state on dark */
-  --brand-accent-lit-light:#6E4F17;  /* hover / link state on light */
-  --brand-on-accent:       #12171A;
-  --brand-on-accent-light: #FCFAF5;
+  --brand-paper:       #FAFAFA;
+  --brand-ink:         #141011;
+  --brand-red:         #C8102E;
+  --brand-red-dark:    #A00B24;
+  --brand-red-lit:     #EE4C5E;
+  --brand-red-lit-hi:  #F5707E;
+  --brand-on-red:      #FFFFFF;
+  --brand-on-red-dark: #1A0F11;
 }
 
-/* ---------- tokens: dark is the default ---------- */
+/* ---------- tokens: light is the default ----------
+   Neutrals carry a faint warm bias so they sit with the red rather than
+   fighting it. Retune this ramp if the accent hue moves. */
 :root {
-  --ground:      var(--brand-dark);
-  --ground-deep: #080A0B;
-  --surface:     #14191C;
-  --surface-2:   #1B2226;
-  --line:        #2A3338;
-  --line-soft:   #1E262A;
-  --text:        #DDE4E6;
-  --text-dim:    #93A0A6;
-  --text-faint:  #6B787E;
-  --accent:      var(--brand-accent);
-  --accent-lit:  var(--brand-accent-lit);
-  --on-accent:   var(--brand-on-accent);
-  --open:        #79C695;
-  --shut:        #C9797A;
+  --ground:      var(--brand-paper);
+  --ground-deep: #EFECEC;
+  --surface:     #FFFFFF;
+  --surface-2:   #F1EEEE;
+  --line:        #D8D2D2;
+  --line-soft:   #E8E3E3;
+  --text:        #17100F;
+  --text-dim:    #5E5555;
+  --text-faint:  #857B7B;
+  --accent:      var(--brand-red);
+  --accent-lit:  var(--brand-red-dark);
+  --on-accent:   var(--brand-on-red);
+  --open:        #1E7A45;
+  --shut:        #8B7E7E;
 
   --font-display: ui-sans-serif, system-ui, -apple-system, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
   --font-body: ui-serif, Georgia, "Iowan Old Style", "Times New Roman", serif;
@@ -65,45 +70,47 @@
   --shell: 74rem;
 
   --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
-  color-scheme: dark;
+  color-scheme: light;
 }
 
-@media (prefers-color-scheme: light) {
-  :root:not([data-theme="dark"]) {
-    --ground:      var(--brand-light);
-    --ground-deep: #DCE1E1;
-    --surface:     #F7F8F8;
-    --surface-2:   #DFE4E4;
-    --line:        #C6CDCE;
-    --line-soft:   #D8DDDD;
-    --text:        #12171A;
-    --text-dim:    #556166;
-    --text-faint:  #768388;
-    --accent:      var(--brand-accent-light);
-    --accent-lit:  var(--brand-accent-lit-light);
-    --on-accent:   var(--brand-on-accent-light);
-    --open:        #2C7549;
-    --shut:        #9C3B3D;
-    color-scheme: light;
+/* An OS set to dark wins unless the page has been explicitly stamped light. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --ground:      var(--brand-ink);
+    --ground-deep: #0C090A;
+    --surface:     #1D1718;
+    --surface-2:   #262021;
+    --line:        #3A3233;
+    --line-soft:   #2A2324;
+    --text:        #F2EDED;
+    --text-dim:    #A79C9C;
+    --text-faint:  #7D7272;
+    --accent:      var(--brand-red-lit);
+    --accent-lit:  var(--brand-red-lit-hi);
+    --on-accent:   var(--brand-on-red-dark);
+    --open:        #63C48C;
+    --shut:        #8B7E7E;
+    color-scheme: dark;
   }
 }
 
-:root[data-theme="light"] {
-  --ground:      var(--brand-light);
-  --ground-deep: #DCE1E1;
-  --surface:     #F7F8F8;
-  --surface-2:   #DFE4E4;
-  --line:        #C6CDCE;
-  --line-soft:   #D8DDDD;
-  --text:        #12171A;
-  --text-dim:    #556166;
-  --text-faint:  #768388;
-  --accent:      var(--brand-accent-light);
-  --accent-lit:  var(--brand-accent-lit-light);
-  --on-accent:   var(--brand-on-accent-light);
-  --open:        #2C7549;
-  --shut:        #9C3B3D;
-  color-scheme: light;
+/* An explicit toggle wins in the other direction. */
+:root[data-theme="dark"] {
+  --ground:      var(--brand-ink);
+  --ground-deep: #0C090A;
+  --surface:     #1D1718;
+  --surface-2:   #262021;
+  --line:        #3A3233;
+  --line-soft:   #2A2324;
+  --text:        #F2EDED;
+  --text-dim:    #A79C9C;
+  --text-faint:  #7D7272;
+  --accent:      var(--brand-red-lit);
+  --accent-lit:  var(--brand-red-lit-hi);
+  --on-accent:   var(--brand-on-red-dark);
+  --open:        #63C48C;
+  --shut:        #8B7E7E;
+  color-scheme: dark;
 }
 
 /* ---------- base ---------- */
@@ -215,7 +222,7 @@ a { color: inherit; }
   font-size: var(--t-sm);
   font-weight: 700;
   letter-spacing: 0.01em;
-  color: var(--accent-lit);
+  color: var(--accent);
   text-decoration: none;
   padding-block: 0.35rem;
 }
@@ -484,12 +491,14 @@ a { color: inherit; }
 
 .split { display: grid; gap: clamp(1.75rem, 4vw, 2.5rem); }
 
+/* Red is loud enough that section labels stay neutral — the accent is spent
+   on things you can act on, plus the closing band. */
 .rail-label {
   font-family: var(--font-mono);
   font-size: var(--t-micro);
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: var(--accent);
+  color: var(--text-faint);
   padding-bottom: 0.75rem;
   border-bottom: 1px solid var(--line);
 }
@@ -521,7 +530,7 @@ a { color: inherit; }
 .card__price {
   font-family: var(--font-mono);
   font-size: var(--t-sm);
-  color: var(--accent-lit);
+  color: var(--text);
   font-variant-numeric: tabular-nums;
   margin-top: 0.15rem;
 }
@@ -574,7 +583,7 @@ a { color: inherit; }
   font-family: var(--font-mono);
   font-size: var(--t-sm);
   font-variant-numeric: tabular-nums;
-  color: var(--accent-lit);
+  color: var(--accent);
   white-space: nowrap;
 }
 
@@ -664,8 +673,8 @@ a { color: inherit; }
   color: var(--text-dim);
 }
 .hours__shut { color: var(--text-faint); }
-.hours tr.is-today th { color: var(--accent-lit); font-weight: 700; }
-.hours tr.is-today td { color: var(--accent-lit); }
+.hours tr.is-today th { color: var(--accent); font-weight: 700; }
+.hours tr.is-today td { color: var(--accent); }
 
 .addr { font-style: normal; font-size: var(--t-lede); line-height: 1.45; }
 
@@ -689,7 +698,7 @@ a { color: inherit; }
 .contact__v {
   font-family: var(--font-mono);
   font-size: var(--t-sm);
-  color: var(--accent-lit);
+  color: var(--accent);
 }
 .contact a:hover .contact__v { color: var(--text); }
 
@@ -699,18 +708,35 @@ a { color: inherit; }
   place-items: center;
   border: 1px solid var(--line-soft);
   background:
-    repeating-linear-gradient(90deg, transparent 0 47px, var(--line-soft) 47px 48px),
-    repeating-linear-gradient(0deg, transparent 0 47px, var(--line-soft) 47px 48px),
-    var(--surface);
+    repeating-linear-gradient(90deg, transparent 0 47px, var(--line) 47px 48px),
+    repeating-linear-gradient(0deg, transparent 0 47px, var(--line) 47px 48px),
+    var(--surface-2);
   max-height: 22rem;
 }
 
 /* ---------- closer ---------- */
+/* The one place the red goes full-bleed. Everything above it stays quiet
+   so this reads as the end of the page and the last chance to book. */
 .closer {
   padding-block: clamp(4rem, 11vw, 8rem);
-  background: var(--ground-deep);
-  border-top: 1px solid var(--line-soft);
+  background: var(--accent);
+  color: var(--on-accent);
   text-align: center;
+}
+.closer .btn--accent {
+  background: var(--on-accent);
+  color: var(--accent);
+}
+.closer .btn--accent:hover {
+  background: color-mix(in srgb, var(--on-accent) 86%, var(--accent));
+}
+.closer .btn--ghost {
+  border-color: color-mix(in srgb, var(--on-accent) 45%, transparent);
+  color: var(--on-accent);
+}
+.closer .btn--ghost:hover {
+  border-color: var(--on-accent);
+  color: var(--on-accent);
 }
 .closer__title {
   font-family: var(--font-display);
@@ -720,7 +746,7 @@ a { color: inherit; }
   line-height: 0.95;
 }
 .closer__sub {
-  color: var(--text-dim);
+  color: color-mix(in srgb, var(--on-accent) 82%, transparent);
   max-width: 34ch;
   margin: 1rem auto clamp(1.5rem, 4vw, 2rem);
 }
@@ -1393,8 +1419,8 @@ a { color: inherit; }
       tint.accent = (css.getPropertyValue('--accent') || '#C69B4E').trim();
       // Bands lighten a dark ground and darken a light one.
       var light = getComputedStyle(document.documentElement).colorScheme.indexOf('light') > -1;
-      tint.steel = light ? '#3F4B50' : '#ffffff';
-      tint.scale = light ? 0.5 : 1;
+      tint.steel = light ? '#3B2F30' : '#ffffff';
+      tint.scale = light ? 0.7 : 1;
     }
     readTint();
 
