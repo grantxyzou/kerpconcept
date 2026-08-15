@@ -4,12 +4,18 @@ const { chromium } = require('playwright');
 const path = require('path');
 const fs = require('fs');
 
+// Use a prebuilt Chromium when CHROMIUM_PATH points at one; otherwise let
+// Playwright resolve the browser it downloaded itself, which is what CI needs.
+const launchOptions = process.env.CHROMIUM_PATH
+  ? { executablePath: process.env.CHROMIUM_PATH }
+  : {};
+
 const FILE = 'file://' + path.join(__dirname, '..', 'dist', 'index.html');
 const OUT = path.join(__dirname, '..', '.shots');
 
 (async () => {
   fs.mkdirSync(OUT, { recursive: true });
-  const browser = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium' });
+  const browser = await chromium.launch(launchOptions);
 
   const shot = async (name, { width, height, scheme, mobile }, steps) => {
     const ctx = await browser.newContext({

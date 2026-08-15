@@ -6,11 +6,27 @@ dependencies — open `index.html` and it runs.
 
 This is a design POC, not the live site.
 
+**Live:** https://grantxyzou.github.io/kerpconcept/
+
 ## Run it
 
 ```sh
 python3 -m http.server 8000    # then open http://localhost:8000
 ```
+
+## Hosting
+
+GitHub Pages, driven by `.github/workflows/deploy.yml`. Every push to `main` runs the
+responsive and accessibility gates first and only deploys if both pass, so a regression
+fails the build instead of reaching the live URL. Pull requests run the same gates without
+deploying.
+
+The workflow publishes `index.html` plus `assets/` — not the whole repo, and not the
+single-file `dist/` build, since separate CSS and JS cache better. Asset paths are relative,
+which is what lets the site work from the `/kerpconcept/` sub-path a project Pages site uses.
+
+A custom domain (say `poc.kerp.ca`) would need a `CNAME` file in the published output plus a
+DNS record; nothing else about the setup would change.
 
 ## Build a single-file version
 
@@ -28,11 +44,19 @@ Writes two files:
 ## Check it
 
 ```sh
-npm install                # playwright + axe-core, used by the checks
+npm ci                     # playwright + axe-core, used by the checks
+npx playwright install chromium
 node build.js
 node scripts/shots.js      # 390 / 768 / 1440 in both themes; fails on overflow or console errors
 node scripts/a11y.js       # axe-core WCAG 2.1 AA, plus target size and focus visibility
 node scripts/states.js     # viewport captures of specific states, written to .shots/
+```
+
+The scripts launch the Chromium that Playwright downloads. If you already have a browser
+elsewhere — a preinstalled image, a shared cache — point `CHROMIUM_PATH` at it instead:
+
+```sh
+CHROMIUM_PATH=/opt/pw-browsers/chromium node scripts/a11y.js
 ```
 
 `shots.js` exits non-zero if the page scrolls horizontally at any viewport or if anything
@@ -127,6 +151,7 @@ index.html            markup
 assets/css/kerp.css   tokens, components, breakpoints
 assets/js/kerp.js     nav, live hours, tabs, reveals, hero canvas
 build.js              inlines assets into dist/
+.github/workflows/    gated deploy to GitHub Pages
 scripts/shots.js      responsive + regression check
 scripts/a11y.js       axe-core WCAG audit, target size, focus visibility
 scripts/states.js     state captures for review
