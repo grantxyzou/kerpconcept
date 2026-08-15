@@ -28,25 +28,50 @@ Writes two files:
 ## Check it
 
 ```sh
-npm install                # playwright only, used for the checks
+npm install                # playwright + axe-core, used by the checks
 node build.js
 node scripts/shots.js      # 390 / 768 / 1440 in both themes; fails on overflow or console errors
+node scripts/a11y.js       # axe-core WCAG 2.1 AA, plus target size and focus visibility
 node scripts/states.js     # viewport captures of specific states, written to .shots/
 ```
 
 `shots.js` exits non-zero if the page scrolls horizontally at any viewport or if anything
-logs to the console, so it works as a pre-commit gate.
+logs to the console. `a11y.js` exits non-zero on any accessibility violation. Both work as
+pre-commit gates.
+
+### Accessibility
+
+`scripts/a11y.js` runs axe-core against `wcag2a`, `wcag2aa`, `wcag21a` and `wcag21aa` in
+six configurations — mobile, desktop and mobile-with-the-drawer-open, each in both themes.
+It scrolls the whole page first so the scroll-reveal elements are in their final state,
+since axe reads `opacity: 0` as hidden.
+
+Two things axe cannot check are covered separately. Target size is measured against 44x44
+CSS px — the WCAG 2.5.5 AAA bar, stricter than the 24x24 AA floor in 2.5.8. Focus
+visibility is driven by real `Tab` presses rather than `element.focus()`, because
+`:focus-visible` only matches keyboard-initiated focus and a programmatic call reports
+every element as unstyled.
+
+Current state: **0 violations in all six configurations**, all targets at or above 44px,
+and a visible focus ring on every focusable element.
 
 ## The palette
 
-Barber red on white — `#C8102E` against a near-white `#FAFAFA` ground with near-black
-type. Light is the default theme; dark is the secondary one, where the red lifts to
-`#EE4C5E` so it still reads on `#141011`.
+Kerp's own brand: the deep brick red from the logo (`#A31C13`) on a near-white ground,
+with black. Light is the default theme; dark is secondary, where the red lifts to
+`#F04438` so it still clears contrast on `#141011`. The masthead and footer carry a CSS
+rebuild of the logo lockup — a black serif K in a red disc.
 
 The red is spent in three places only: things you can act on (buttons, links, prices, the
 active tab), today's row in the hours table, and the full-bleed closing band. Section
 labels and card prices stay neutral so the accent keeps its weight. Neutrals carry a faint
 warm bias rather than being pure grey, so they sit with the red instead of fighting it.
+
+The colour values were read off a screenshot of the live site rather than sampled from it,
+so swap in exact codes if you have them. Two brand elements are deliberately not matched:
+the live site sets body copy in mid-grey, which lands around 4.6:1 and would fail the
+audit above, and it uses a geometric sans that would need self-hosting to reproduce
+(no webfont is loaded here — see the type stack in `kerp.css`).
 
 ### Swapping it
 
@@ -87,7 +112,9 @@ never starts under `prefers-reduced-motion`.
 
 ## Content notes
 
-Copy, prices, hours and contact details come from the business's public listings. Only the
+Copy, prices, hours and contact details come from the business's public listings. Note that
+the live site states **appointments only**, which overrides the "walk-ins welcome" field in
+the directory listings — the page reflects the site. Only the
 imagery is placeholder — the portrait, the work grid and the map embed — and each is
 labelled as such in the page rather than faked. There are no invented testimonials —
 the "what clients mention most" block summarises themes across the public reviews rather
@@ -101,5 +128,6 @@ assets/css/kerp.css   tokens, components, breakpoints
 assets/js/kerp.js     nav, live hours, tabs, reveals, hero canvas
 build.js              inlines assets into dist/
 scripts/shots.js      responsive + regression check
+scripts/a11y.js       axe-core WCAG audit, target size, focus visibility
 scripts/states.js     state captures for review
 ```

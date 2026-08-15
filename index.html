@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Kerp Barbershop &amp; Salon</title>
-<meta name="description" content="Kerp Barbershop &amp; Salon — precision cuts, colour and classic shaves at 524 W Pender St in downtown Vancouver. Walk-ins welcome.">
+<meta name="description" content="Kerp Barbershop &amp; Salon — precision cuts, colour and classic shaves at 524 W Pender St in downtown Vancouver. By appointment.">
 <meta name="theme-color" content="#FAFAFA" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#141011" media="(prefers-color-scheme: dark)">
 <link rel="stylesheet" href="assets/css/kerp.css">
@@ -16,8 +16,10 @@
 <header class="masthead" id="masthead">
   <div class="masthead__inner shell">
     <a class="wordmark" href="#top" aria-label="Kerp Barbershop and Salon, home">
-      <span class="wordmark__name">Kerp</span>
-      <span class="wordmark__sub">Barbershop &amp; Salon</span>
+      <span class="wordmark__lockup" aria-hidden="true">
+        <span class="wordmark__disc">K</span><span class="wordmark__erp">erp</span>
+      </span>
+      <span class="wordmark__sub" aria-hidden="true">Barbershop &amp; Salon</span>
     </a>
 
     <nav class="nav-desk" aria-label="Primary">
@@ -86,7 +88,7 @@
       </div>
       <div class="facts__item">
         <dt>Walk-ins</dt>
-        <dd><span class="facts__big">Yes</span> <span class="facts__unit">chair permitting</span></dd>
+        <dd><span class="facts__big">No</span> <span class="facts__unit">appointments only</span></dd>
       </div>
       <div class="facts__item">
         <dt>Haircut from</dt>
@@ -243,7 +245,7 @@
       <div class="split__body">
         <h2 class="h2 reveal">Recent cuts.</h2>
         <p class="lede reveal">A normal week in the chair. Shop photography drops straight into this grid — the tiles below are placeholders for the proof of concept.</p>
-        <ul class="gallery reveal">
+        <ul class="gallery reveal" tabindex="0" aria-label="Recent cuts, scrollable">
           <li class="shot shot--a"><span class="ph-tag">Skin fade</span></li>
           <li class="shot shot--b"><span class="ph-tag">Scissor crop</span></li>
           <li class="shot shot--c"><span class="ph-tag">Beard shape</span></li>
@@ -307,7 +309,7 @@
   <section class="closer">
     <div class="shell">
       <h2 class="closer__title reveal">Chair’s free.</h2>
-      <p class="closer__sub reveal">Book a slot, or walk in and take your chances — most days that works out fine.</p>
+      <p class="closer__sub reveal">Appointments only, so grab a slot — online any time, or call during shop hours.</p>
       <div class="hero__cta reveal">
         <a class="btn btn--accent" href="https://www.fresha.com/lvp/kerp-salon-barbershop-and-hair-salon-mens-and-womens-services-downtown-vancouver-NoJKM7" target="_blank" rel="noopener">Book online</a>
         <a class="btn btn--ghost" href="tel:+16046850649">(604) 685-0649</a>
@@ -319,7 +321,13 @@
 
 <footer class="foot">
   <div class="shell foot__inner">
-    <p class="foot__mark">Kerp <span>Barbershop &amp; Salon</span></p>
+    <p class="foot__mark">
+      <span class="wordmark__lockup" aria-hidden="true">
+        <span class="wordmark__disc">K</span><span class="wordmark__erp">erp</span>
+      </span>
+      <span class="sr-only">Kerp</span>
+      <span class="foot__descriptor">Barbershop &amp; Salon</span>
+    </p>
     <p class="foot__meta">524 W Pender St, Vancouver BC · info@kerp.ca · (604) 685-0649</p>
     <p class="foot__poc">Design proof of concept — not the live kerp.ca.</p>
   </div>

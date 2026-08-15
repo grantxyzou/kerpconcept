@@ -4,40 +4,46 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Kerp Barbershop &amp; Salon</title>
-<meta name="description" content="Kerp Barbershop &amp; Salon — precision cuts, colour and classic shaves at 524 W Pender St in downtown Vancouver. Walk-ins welcome.">
+<meta name="description" content="Kerp Barbershop &amp; Salon — precision cuts, colour and classic shaves at 524 W Pender St in downtown Vancouver. By appointment.">
 <meta name="theme-color" content="#FAFAFA" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#141011" media="(prefers-color-scheme: dark)">
 <style>
 /* ==========================================================================
    Kerp Barbershop & Salon — proof of concept
-   Barber red on white. Light-first, dark theme secondary.
+   Kerp's brick red on near-white, with black. Light-first, dark secondary.
    Mono for anything measured.
    ========================================================================== */
 
 /* ==========================================================================
-   BRAND — the only block to edit when applying a different palette.
+   BRAND — matched to the kerp.ca logo: a deep brick red, black, and a
+   near-white ground. Values are read off a screenshot of the live site, so
+   swap in the exact codes if you have them; nothing else needs to change.
+
    Every other rule reads through the tokens beneath it, and the hero canvas
    reads --accent at runtime, so these eight values re-skin both themes.
 
    --brand-paper       the light ground (default theme)
    --brand-ink         the dark ground (secondary theme)
    --brand-red         the accent on paper — buttons, links, prices, the
-                       closing band. Needs 4.5:1 against --brand-paper.
+                       closing band. 7.7:1 on --brand-paper.
    --brand-red-dark    hover state on paper
-   --brand-red-lit     the same red lifted enough to read on --brand-ink
+   --brand-red-lit     the same hue lifted to clear 4.5:1 on --brand-ink
    --brand-red-lit-hi  hover state on ink
-   --brand-on-red-*    text sitting on a filled red surface. White works on
-                       the deep red; the lifted red needs dark text instead.
+   --brand-on-red-*    text on a filled red surface. White clears the deep
+                       red; the lifted red needs near-black instead.
    ========================================================================== */
 :root {
-  --brand-paper:       #FAFAFA;
+  --brand-paper:       #F8F7F6;
   --brand-ink:         #141011;
-  --brand-red:         #C8102E;
-  --brand-red-dark:    #A00B24;
-  --brand-red-lit:     #EE4C5E;
-  --brand-red-lit-hi:  #F5707E;
+  --brand-red:         #A31C13;
+  --brand-red-dark:    #7E1610;
+  --brand-red-lit:     #F04438;
+  --brand-red-lit-hi:  #F87465;
   --brand-on-red:      #FFFFFF;
   --brand-on-red-dark: #1A0F11;
+  /* The logo sets a black K inside the red disc. Logotypes are exempt from
+     contrast minimums, and this is the mark as drawn. */
+  --brand-logo-k:      #111111;
 }
 
 /* ---------- tokens: light is the default ----------
@@ -52,7 +58,7 @@
   --line-soft:   #E8E3E3;
   --text:        #17100F;
   --text-dim:    #5E5555;
-  --text-faint:  #857B7B;
+  --text-faint:  #756B6B;
   --accent:      var(--brand-red);
   --accent-lit:  var(--brand-red-dark);
   --on-accent:   var(--brand-on-red);
@@ -92,7 +98,7 @@
     --line-soft:   #2A2324;
     --text:        #F2EDED;
     --text-dim:    #A79C9C;
-    --text-faint:  #7D7272;
+    --text-faint:  #8A7E7E;
     --accent:      var(--brand-red-lit);
     --accent-lit:  var(--brand-red-lit-hi);
     --on-accent:   var(--brand-on-red-dark);
@@ -112,7 +118,7 @@
   --line-soft:   #2A2324;
   --text:        #F2EDED;
   --text-dim:    #A79C9C;
-  --text-faint:  #7D7272;
+  --text-faint:  #8A7E7E;
   --accent:      var(--brand-red-lit);
   --accent-lit:  var(--brand-red-lit-hi);
   --on-accent:   var(--brand-on-red-dark);
@@ -165,8 +171,10 @@ a { color: inherit; }
   position: absolute; left: 50%; top: 0;
   transform: translate(-50%, -120%);
   z-index: 200;
+  display: inline-flex; align-items: center;
+  min-height: 2.75rem;
   background: var(--accent); color: var(--on-accent);
-  padding: 0.6rem 1.2rem;
+  padding: 0 1.2rem;
   font-family: var(--font-display);
   font-size: var(--t-sm); font-weight: 700;
   text-decoration: none;
@@ -268,7 +276,7 @@ a { color: inherit; }
 .btn--ghost { border-color: var(--line); color: var(--text); }
 .btn--ghost:hover { border-color: var(--accent); color: var(--accent-lit); }
 
-.btn--sm { min-height: 2.5rem; padding: 0 1rem; }
+.btn--sm { min-height: 2.75rem; padding: 0 1.1rem; }
 .btn--block { width: 100%; }
 
 /* ---------- masthead ---------- */
@@ -293,19 +301,40 @@ a { color: inherit; }
   min-height: 4.25rem;
 }
 
+/* Logo lockup, after the kerp.ca mark: a black serif K in a red disc, the
+   rest of the word in red beside it. The anchor carries the accessible name,
+   so the pieces are aria-hidden. */
 .wordmark {
   display: grid;
+  align-content: center;
+  min-height: 2.75rem;
   text-decoration: none;
   margin-right: auto;
   line-height: 1;
 }
-.wordmark__name {
-  font-family: var(--font-display);
-  font-size: 1.375rem;
-  font-weight: 800;
-  letter-spacing: 0.24em;
-  text-transform: uppercase;
-  text-indent: 0.24em;
+.wordmark__lockup {
+  display: flex;
+  align-items: center;
+  font-family: var(--font-body);
+}
+.wordmark__disc {
+  display: grid;
+  place-items: center;
+  width: 1.85rem;
+  height: 1.85rem;
+  border-radius: 50%;
+  background: var(--accent);
+  color: var(--brand-logo-k);
+  font-size: 1.2rem;
+  font-weight: 700;
+  padding-right: 0.04em;
+}
+.wordmark__erp {
+  font-size: 1.4rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  color: var(--accent);
+  margin-left: -0.12em;
 }
 .wordmark__sub {
   font-family: var(--font-mono);
@@ -313,7 +342,7 @@ a { color: inherit; }
   letter-spacing: 0.2em;
   text-transform: uppercase;
   color: var(--text-faint);
-  margin-top: 0.35rem;
+  margin-top: 0.4rem;
 }
 
 .nav-desk { display: none; }
@@ -754,7 +783,9 @@ a { color: inherit; }
   line-height: 0.95;
 }
 .closer__sub {
-  color: color-mix(in srgb, var(--on-accent) 82%, transparent);
+  /* Full strength: softening this to 82% dropped it to 4.05:1 on the lifted
+     red of the dark theme. Size and weight carry the hierarchy instead. */
+  color: var(--on-accent);
   max-width: 34ch;
   margin: 1rem auto clamp(1.5rem, 4vw, 2rem);
 }
@@ -768,20 +799,14 @@ a { color: inherit; }
   background: var(--ground);
 }
 .foot__inner { display: grid; gap: 0.6rem; }
-.foot__mark {
-  font-family: var(--font-display);
-  font-size: 1.125rem;
-  font-weight: 800;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-}
-.foot__mark span {
-  display: block;
+.foot__mark { display: grid; justify-items: start; }
+.foot__descriptor {
   font-family: var(--font-mono);
   font-size: 0.5625rem;
   letter-spacing: 0.2em;
+  text-transform: uppercase;
   color: var(--text-faint);
-  margin-top: 0.35rem;
+  margin-top: 0.4rem;
 }
 .foot__meta { font-size: var(--t-sm); color: var(--text-dim); }
 .foot__poc { font-family: var(--font-mono); font-size: var(--t-micro); color: var(--text-faint); letter-spacing: 0.06em; }
@@ -855,16 +880,23 @@ a { color: inherit; }
 
   .nav-desk {
     display: flex;
-    gap: 1.75rem;
+    gap: 0.6rem;
   }
+  /* Padding rather than gap, so short labels like "Visit" still present a
+     44px-wide target instead of just their text width. */
   .nav-desk a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 2.75rem;
+    min-width: 2.75rem;
+    padding-inline: 0.6rem;
     font-family: var(--font-display);
     font-size: var(--t-sm);
     font-weight: 600;
     letter-spacing: 0.01em;
     text-decoration: none;
     color: var(--text-dim);
-    padding-block: 0.5rem;
     transition: color 0.2s var(--ease);
   }
   .nav-desk a:hover { color: var(--text); }
@@ -910,8 +942,10 @@ a { color: inherit; }
 <header class="masthead" id="masthead">
   <div class="masthead__inner shell">
     <a class="wordmark" href="#top" aria-label="Kerp Barbershop and Salon, home">
-      <span class="wordmark__name">Kerp</span>
-      <span class="wordmark__sub">Barbershop &amp; Salon</span>
+      <span class="wordmark__lockup" aria-hidden="true">
+        <span class="wordmark__disc">K</span><span class="wordmark__erp">erp</span>
+      </span>
+      <span class="wordmark__sub" aria-hidden="true">Barbershop &amp; Salon</span>
     </a>
 
     <nav class="nav-desk" aria-label="Primary">
@@ -980,7 +1014,7 @@ a { color: inherit; }
       </div>
       <div class="facts__item">
         <dt>Walk-ins</dt>
-        <dd><span class="facts__big">Yes</span> <span class="facts__unit">chair permitting</span></dd>
+        <dd><span class="facts__big">No</span> <span class="facts__unit">appointments only</span></dd>
       </div>
       <div class="facts__item">
         <dt>Haircut from</dt>
@@ -1137,7 +1171,7 @@ a { color: inherit; }
       <div class="split__body">
         <h2 class="h2 reveal">Recent cuts.</h2>
         <p class="lede reveal">A normal week in the chair. Shop photography drops straight into this grid — the tiles below are placeholders for the proof of concept.</p>
-        <ul class="gallery reveal">
+        <ul class="gallery reveal" tabindex="0" aria-label="Recent cuts, scrollable">
           <li class="shot shot--a"><span class="ph-tag">Skin fade</span></li>
           <li class="shot shot--b"><span class="ph-tag">Scissor crop</span></li>
           <li class="shot shot--c"><span class="ph-tag">Beard shape</span></li>
@@ -1201,7 +1235,7 @@ a { color: inherit; }
   <section class="closer">
     <div class="shell">
       <h2 class="closer__title reveal">Chair’s free.</h2>
-      <p class="closer__sub reveal">Book a slot, or walk in and take your chances — most days that works out fine.</p>
+      <p class="closer__sub reveal">Appointments only, so grab a slot — online any time, or call during shop hours.</p>
       <div class="hero__cta reveal">
         <a class="btn btn--accent" href="https://www.fresha.com/lvp/kerp-salon-barbershop-and-hair-salon-mens-and-womens-services-downtown-vancouver-NoJKM7" target="_blank" rel="noopener">Book online</a>
         <a class="btn btn--ghost" href="tel:+16046850649">(604) 685-0649</a>
@@ -1213,7 +1247,13 @@ a { color: inherit; }
 
 <footer class="foot">
   <div class="shell foot__inner">
-    <p class="foot__mark">Kerp <span>Barbershop &amp; Salon</span></p>
+    <p class="foot__mark">
+      <span class="wordmark__lockup" aria-hidden="true">
+        <span class="wordmark__disc">K</span><span class="wordmark__erp">erp</span>
+      </span>
+      <span class="sr-only">Kerp</span>
+      <span class="foot__descriptor">Barbershop &amp; Salon</span>
+    </p>
     <p class="foot__meta">524 W Pender St, Vancouver BC · info@kerp.ca · (604) 685-0649</p>
     <p class="foot__poc">Design proof of concept — not the live kerp.ca.</p>
   </div>
