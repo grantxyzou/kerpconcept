@@ -1,0 +1,1529 @@
+<title>Kerp Barbershop &amp; Salon</title>
+<style>
+/* ==========================================================================
+   Kerp Barbershop & Salon — proof of concept
+   Kerp's brick red on near-white, with black. Light-first, dark secondary.
+   Mono for anything measured.
+   ========================================================================== */
+
+/* ==========================================================================
+   BRAND — matched to the kerp.ca logo: a deep brick red, black, and a
+   near-white ground. Values are read off a screenshot of the live site, so
+   swap in the exact codes if you have them; nothing else needs to change.
+
+   Every other rule reads through the tokens beneath it, and the hero canvas
+   reads --accent at runtime, so these eight values re-skin both themes.
+
+   --brand-paper       the light ground (default theme)
+   --brand-ink         the dark ground (secondary theme)
+   --brand-red         the accent on paper — buttons, links, prices, the
+                       closing band. 7.7:1 on --brand-paper.
+   --brand-red-dark    hover state on paper
+   --brand-red-lit     the same hue lifted to clear 4.5:1 on --brand-ink
+   --brand-red-lit-hi  hover state on ink
+   --brand-on-red-*    text on a filled red surface. White clears the deep
+                       red; the lifted red needs near-black instead.
+   ========================================================================== */
+:root {
+  --brand-paper:       #F8F7F6;
+  --brand-ink:         #141011;
+  --brand-red:         #A31C13;
+  --brand-red-dark:    #7E1610;
+  --brand-red-lit:     #F04438;
+  --brand-red-lit-hi:  #F87465;
+  --brand-on-red:      #FFFFFF;
+  --brand-on-red-dark: #1A0F11;
+  /* The logo sets a black K inside the red disc. Logotypes are exempt from
+     contrast minimums, and this is the mark as drawn. */
+  --brand-logo-k:      #111111;
+}
+
+/* ---------- tokens: light is the default ----------
+   Neutrals carry a faint warm bias so they sit with the red rather than
+   fighting it. Retune this ramp if the accent hue moves. */
+:root {
+  --ground:      var(--brand-paper);
+  --ground-deep: #EFECEC;
+  --surface:     #FFFFFF;
+  --surface-2:   #F1EEEE;
+  --line:        #D8D2D2;
+  --line-soft:   #E8E3E3;
+  --text:        #17100F;
+  --text-dim:    #5E5555;
+  --text-faint:  #756B6B;
+  --accent:      var(--brand-red);
+  --accent-lit:  var(--brand-red-dark);
+  --on-accent:   var(--brand-on-red);
+  --open:        #1E7A45;
+  --shut:        #8B7E7E;
+
+  --font-display: ui-sans-serif, system-ui, -apple-system, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  --font-body: ui-serif, Georgia, "Iowan Old Style", "Times New Roman", serif;
+  --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+
+  /* fluid type scale */
+  --t-micro: 0.6875rem;
+  --t-sm:    clamp(0.8125rem, 0.79rem + 0.12vw, 0.875rem);
+  --t-base:  clamp(1rem, 0.97rem + 0.16vw, 1.0625rem);
+  --t-lede:  clamp(1.0625rem, 1rem + 0.4vw, 1.25rem);
+  --t-h3:    clamp(1.0625rem, 1rem + 0.35vw, 1.1875rem);
+  --t-h2:    clamp(1.75rem, 1.35rem + 2vw, 2.75rem);
+  --t-h1:    clamp(2.75rem, 1.6rem + 8.4vw, 6.5rem);
+
+  --gap:  clamp(1.25rem, 4vw, 2rem);
+  --bay:  clamp(3.5rem, 9vw, 7rem);
+  --pad:  clamp(1.25rem, 5vw, 2.5rem);
+  --shell: 74rem;
+
+  --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+  color-scheme: light;
+}
+
+/* An OS set to dark wins unless the page has been explicitly stamped light. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --ground:      var(--brand-ink);
+    --ground-deep: #0C090A;
+    --surface:     #1D1718;
+    --surface-2:   #262021;
+    --line:        #3A3233;
+    --line-soft:   #2A2324;
+    --text:        #F2EDED;
+    --text-dim:    #A79C9C;
+    --text-faint:  #8A7E7E;
+    --accent:      var(--brand-red-lit);
+    --accent-lit:  var(--brand-red-lit-hi);
+    --on-accent:   var(--brand-on-red-dark);
+    --open:        #63C48C;
+    --shut:        #8B7E7E;
+    color-scheme: dark;
+  }
+}
+
+/* An explicit toggle wins in the other direction. */
+:root[data-theme="dark"] {
+  --ground:      var(--brand-ink);
+  --ground-deep: #0C090A;
+  --surface:     #1D1718;
+  --surface-2:   #262021;
+  --line:        #3A3233;
+  --line-soft:   #2A2324;
+  --text:        #F2EDED;
+  --text-dim:    #A79C9C;
+  --text-faint:  #8A7E7E;
+  --accent:      var(--brand-red-lit);
+  --accent-lit:  var(--brand-red-lit-hi);
+  --on-accent:   var(--brand-on-red-dark);
+  --open:        #63C48C;
+  --shut:        #8B7E7E;
+  color-scheme: dark;
+}
+
+/* ---------- base ---------- */
+*, *::before, *::after { box-sizing: border-box; }
+
+html {
+  -webkit-text-size-adjust: 100%;
+  scroll-behavior: smooth;
+  scroll-padding-top: 5.5rem;
+}
+
+body {
+  margin: 0;
+  background: var(--ground);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: var(--t-base);
+  line-height: 1.62;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+body.is-locked { overflow: hidden; }
+
+img, canvas { display: block; max-width: 100%; }
+h1, h2, h3, p, dl, dd, figure { margin: 0; }
+ul, ol { margin: 0; padding: 0; list-style: none; }
+
+a { color: inherit; }
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+.sr-only {
+  position: absolute; width: 1px; height: 1px;
+  padding: 0; margin: -1px; overflow: hidden;
+  clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+
+.skip {
+  position: absolute; left: 50%; top: 0;
+  transform: translate(-50%, -120%);
+  z-index: 200;
+  display: inline-flex; align-items: center;
+  min-height: 2.75rem;
+  background: var(--accent); color: var(--on-accent);
+  padding: 0 1.2rem;
+  font-family: var(--font-display);
+  font-size: var(--t-sm); font-weight: 700;
+  text-decoration: none;
+}
+.skip:focus { transform: translate(-50%, 0); }
+
+.shell {
+  width: 100%;
+  max-width: var(--shell);
+  margin-inline: auto;
+  padding-inline: var(--pad);
+}
+
+/* ---------- shared type ---------- */
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: var(--t-micro);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+.h2 {
+  font-family: var(--font-display);
+  font-size: var(--t-h2);
+  font-weight: 800;
+  letter-spacing: -0.035em;
+  line-height: 1.02;
+  text-wrap: balance;
+}
+
+.h3 {
+  font-family: var(--font-display);
+  font-size: var(--t-h3);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+}
+
+.lede {
+  font-size: var(--t-lede);
+  line-height: 1.5;
+  color: var(--text-dim);
+  max-width: 34ch;
+}
+
+.note {
+  font-size: var(--t-sm);
+  line-height: 1.6;
+  color: var(--text-faint);
+  max-width: 52ch;
+}
+.note--tight { max-width: 30ch; }
+
+.link-arrow {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+  gap: 0.45em;
+  font-family: var(--font-display);
+  font-size: var(--t-sm);
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  color: var(--accent);
+  text-decoration: none;
+  padding-block: 0.35rem;
+}
+.link-arrow span { transition: transform 0.25s var(--ease); }
+.link-arrow:hover span { transform: translateX(4px); }
+
+.ph-tag {
+  font-family: var(--font-mono);
+  font-size: var(--t-micro);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+/* ---------- buttons ---------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 3rem;
+  padding: 0 1.4rem;
+  font-family: var(--font-display);
+  font-size: var(--t-sm);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-decoration: none;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: background-color 0.2s var(--ease), color 0.2s var(--ease), border-color 0.2s var(--ease);
+}
+
+.btn--accent { background: var(--accent); color: var(--on-accent); }
+.btn--accent:hover { background: var(--accent-lit); }
+
+.btn--ghost { border-color: var(--line); color: var(--text); }
+.btn--ghost:hover { border-color: var(--accent); color: var(--accent-lit); }
+
+.btn--sm { min-height: 2.75rem; padding: 0 1.1rem; }
+.btn--block { width: 100%; }
+
+/* ---------- masthead ---------- */
+.masthead {
+  position: sticky;
+  top: 0;
+  z-index: 90;
+  background: color-mix(in srgb, var(--ground) 88%, transparent);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.3s var(--ease), background-color 0.3s var(--ease);
+}
+.masthead.is-stuck {
+  border-bottom-color: var(--line-soft);
+  background: color-mix(in srgb, var(--ground) 96%, transparent);
+}
+
+.masthead__inner {
+  display: flex;
+  align-items: center;
+  gap: var(--gap);
+  min-height: 4.25rem;
+}
+
+/* Logo lockup, after the kerp.ca mark: a black serif K in a red disc, the
+   rest of the word in red beside it. The anchor carries the accessible name,
+   so the pieces are aria-hidden. */
+.wordmark {
+  display: grid;
+  align-content: center;
+  min-height: 2.75rem;
+  text-decoration: none;
+  margin-right: auto;
+  line-height: 1;
+}
+.wordmark__lockup {
+  display: flex;
+  align-items: center;
+  font-family: var(--font-body);
+}
+.wordmark__disc {
+  display: grid;
+  place-items: center;
+  width: 1.85rem;
+  height: 1.85rem;
+  border-radius: 50%;
+  background: var(--accent);
+  color: var(--brand-logo-k);
+  font-size: 1.2rem;
+  font-weight: 700;
+  padding-right: 0.04em;
+}
+.wordmark__erp {
+  font-size: 1.4rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  color: var(--accent);
+  margin-left: -0.12em;
+}
+.wordmark__sub {
+  font-family: var(--font-mono);
+  font-size: 0.5625rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  margin-top: 0.4rem;
+}
+
+.nav-desk { display: none; }
+
+.masthead__actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.burger {
+  width: 2.75rem; height: 2.75rem;
+  display: grid; place-items: center;
+  background: none;
+  border: 1px solid var(--line);
+  color: inherit;
+  cursor: pointer;
+  padding: 0;
+}
+.burger__box { position: relative; width: 18px; height: 12px; }
+.burger__bar,
+.burger__box::before,
+.burger__box::after {
+  position: absolute;
+  left: 0;
+  width: 18px; height: 1.5px;
+  background: currentColor;
+  transition: transform 0.3s var(--ease), opacity 0.2s var(--ease);
+}
+.burger__bar { top: 5.25px; }
+.burger__box::before { content: ""; top: 0; }
+.burger__box::after  { content: ""; bottom: 0; }
+
+.burger[aria-expanded="true"] .burger__bar { opacity: 0; }
+.burger[aria-expanded="true"] .burger__box::before { transform: translateY(5.25px) rotate(45deg); }
+.burger[aria-expanded="true"] .burger__box::after  { transform: translateY(-5.25px) rotate(-45deg); }
+
+/* ---------- drawer ---------- */
+.drawer {
+  position: fixed;
+  inset: 4.25rem 0 0;
+  z-index: 80;
+  background: var(--ground);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: var(--pad);
+  padding-bottom: calc(var(--pad) + env(safe-area-inset-bottom));
+  overflow-y: auto;
+}
+.drawer[hidden] { display: none; }
+
+.drawer__nav { display: grid; }
+.drawer__nav a {
+  display: grid;
+  gap: 0.15rem;
+  padding: 1.05rem 0;
+  border-bottom: 1px solid var(--line-soft);
+  text-decoration: none;
+}
+.drawer__label {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+}
+.drawer__meta {
+  font-family: var(--font-mono);
+  font-size: var(--t-micro);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+.drawer__foot { display: grid; gap: 0.6rem; padding-top: 2rem; }
+
+/* ---------- hero ---------- */
+.hero {
+  position: relative;
+  overflow: hidden;
+  border-bottom: 1px solid var(--line-soft);
+}
+
+.hero__canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+  /* Let the bands dissolve before they reach the facts strip. */
+  -webkit-mask-image: linear-gradient(180deg, #000 0%, #000 55%, transparent 92%);
+  mask-image: linear-gradient(180deg, #000 0%, #000 55%, transparent 92%);
+}
+
+.hero__inner {
+  position: relative;
+  padding-top: clamp(3rem, 11vw, 6.5rem);
+  padding-bottom: clamp(2.5rem, 7vw, 4.5rem);
+  display: grid;
+  gap: 1.5rem;
+  justify-items: start;
+}
+
+.hero__title {
+  font-family: var(--font-display);
+  font-size: var(--t-h1);
+  font-weight: 800;
+  letter-spacing: -0.045em;
+  line-height: 0.93;
+  margin-top: -0.25rem;
+}
+
+.hero__lede {
+  font-size: var(--t-lede);
+  line-height: 1.5;
+  color: var(--text-dim);
+  max-width: 42ch;
+}
+
+.hero__cta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+.hero__cta .btn { flex: 1 1 auto; min-width: 11rem; }
+
+/* live open/closed chip */
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: var(--font-mono);
+  font-size: var(--t-sm);
+  color: var(--text-dim);
+}
+.status[data-empty="true"] { opacity: 0.5; }
+.status__dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--text-faint);
+  flex: none;
+}
+.status.is-open .status__dot { background: var(--open); box-shadow: 0 0 0 4px color-mix(in srgb, var(--open) 22%, transparent); }
+.status.is-shut .status__dot { background: var(--shut); }
+.status.is-open .status__text { color: var(--open); }
+
+/* facts strip */
+.facts {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  border-top: 1px solid var(--line-soft);
+}
+.facts__item {
+  padding: 1.1rem 0;
+  padding-right: var(--gap);
+}
+.facts__item + .facts__item { border-left: 1px solid var(--line-soft); padding-left: var(--gap); }
+.facts__item:nth-child(3) { border-left: 0; padding-left: 0; }
+.facts__item:nth-child(n+3) { border-top: 1px solid var(--line-soft); }
+.facts dt {
+  font-family: var(--font-mono);
+  font-size: var(--t-micro);
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+.facts dd { margin: 0.35rem 0 0; display: grid; gap: 0.1rem; }
+.facts__big {
+  font-family: var(--font-display);
+  font-size: 1.375rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+.facts__unit {
+  font-size: var(--t-sm);
+  color: var(--text-faint);
+  line-height: 1.35;
+}
+
+/* ---------- section frame ---------- */
+.section { padding-block: var(--bay); }
+.section--alt { background: var(--surface); border-block: 1px solid var(--line-soft); }
+
+.split { display: grid; gap: clamp(1.75rem, 4vw, 2.5rem); }
+
+/* Red is loud enough that section labels stay neutral — the accent is spent
+   on things you can act on, plus the closing band. */
+.rail-label {
+  font-family: var(--font-mono);
+  font-size: var(--t-micro);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.split__body { display: grid; gap: clamp(1.25rem, 3vw, 1.75rem); }
+
+/* ---------- service cards ---------- */
+.cards {
+  display: grid;
+  gap: 1px;
+  background: var(--line-soft);
+  border: 1px solid var(--line-soft);
+}
+.card {
+  background: var(--ground);
+  padding: clamp(1.25rem, 4vw, 1.75rem);
+  display: grid;
+  gap: 0.5rem;
+  align-content: start;
+}
+.section--alt .card { background: var(--surface); }
+.card__title {
+  font-family: var(--font-display);
+  font-size: var(--t-h3);
+  font-weight: 700;
+  letter-spacing: -0.015em;
+}
+.card__body { font-size: var(--t-sm); color: var(--text-dim); line-height: 1.55; }
+.card__price {
+  font-family: var(--font-mono);
+  font-size: var(--t-sm);
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+  margin-top: 0.15rem;
+}
+
+/* ---------- tabs + price list ---------- */
+.tabs__list {
+  display: flex;
+  gap: 0.5rem;
+  border-bottom: 1px solid var(--line);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.tabs__list::-webkit-scrollbar { display: none; }
+
+.tab {
+  appearance: none;
+  background: none;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  padding: 0.85rem 0.1rem;
+  margin-right: 1.5rem;
+  color: var(--text-faint);
+  font-family: var(--font-display);
+  font-size: var(--t-sm);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: color 0.2s var(--ease), border-color 0.2s var(--ease);
+}
+.tab[aria-selected="true"] { color: var(--text); border-bottom-color: var(--accent); }
+.tab:hover { color: var(--text); }
+
+.panel { padding-top: 0.5rem; }
+.panel[hidden] { display: none; }
+
+.price { display: grid; }
+.price__row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: baseline;
+  gap: 0.75rem;
+  padding: 0.85rem 0;
+  border-bottom: 1px solid var(--line-soft);
+}
+.price__row dt { font-size: var(--t-sm); }
+.price__row dd {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: var(--t-sm);
+  font-variant-numeric: tabular-nums;
+  color: var(--accent);
+  white-space: nowrap;
+}
+
+/* ---------- bio ---------- */
+.bio { display: grid; gap: var(--gap); }
+
+.bio__portrait {
+  aspect-ratio: 4 / 5;
+  display: grid;
+  place-items: center;
+  background:
+    linear-gradient(148deg, var(--surface-2) 0%, var(--surface) 55%, var(--ground-deep) 100%);
+  border: 1px solid var(--line-soft);
+  max-height: 22rem;
+}
+.section--alt .bio__portrait { background: linear-gradient(148deg, var(--ground) 0%, var(--surface-2) 100%); }
+
+.bio__text { display: grid; gap: 0.9rem; align-content: start; }
+.bio__text p { color: var(--text-dim); max-width: 46ch; }
+
+.themes {
+  border-top: 1px solid var(--line-soft);
+  padding-top: 1.5rem;
+  display: grid;
+  gap: 0.9rem;
+}
+.themes__head {
+  font-family: var(--font-display);
+  font-size: var(--t-sm);
+  font-weight: 700;
+}
+.themes__src { color: var(--text-faint); font-weight: 400; }
+.chips { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.chips li {
+  font-family: var(--font-mono);
+  font-size: var(--t-micro);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  border: 1px solid var(--line);
+  padding: 0.5rem 0.7rem;
+}
+
+/* ---------- gallery ---------- */
+.gallery {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 68%;
+  gap: 0.75rem;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  padding-bottom: 0.5rem;
+  margin-inline: calc(var(--pad) * -1);
+  padding-inline: var(--pad);
+  scrollbar-width: thin;
+}
+.shot {
+  scroll-snap-align: start;
+  aspect-ratio: 4 / 5;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--line-soft);
+}
+.shot--a { background: linear-gradient(160deg, var(--surface-2), var(--ground-deep)); }
+.shot--b { background: linear-gradient(20deg, var(--surface-2), var(--ground-deep)); }
+.shot--c { background: linear-gradient(200deg, var(--ground-deep), var(--surface-2)); }
+.shot--d { background: linear-gradient(120deg, var(--surface-2), var(--ground-deep)); }
+.shot--e { background: linear-gradient(300deg, var(--ground-deep), var(--surface-2)); }
+.shot--f { background: linear-gradient(70deg, var(--surface-2), var(--ground-deep)); }
+
+/* ---------- visit ---------- */
+.visit { display: grid; gap: clamp(1.75rem, 5vw, 2.5rem); }
+.visit__col { display: grid; gap: 0.9rem; align-content: start; }
+
+.hours { width: 100%; border-collapse: collapse; }
+.hours th, .hours td {
+  text-align: left;
+  padding: 0.7rem 0;
+  border-bottom: 1px solid var(--line-soft);
+  font-weight: 400;
+  font-size: var(--t-sm);
+}
+.hours td {
+  text-align: right;
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  color: var(--text-dim);
+}
+.hours__shut { color: var(--text-faint); }
+.hours tr.is-today th { color: var(--accent); font-weight: 700; }
+.hours tr.is-today td { color: var(--accent); }
+
+.addr { font-style: normal; font-size: var(--t-lede); line-height: 1.45; }
+
+.contact { display: grid; }
+.contact a {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--line-soft);
+  text-decoration: none;
+}
+.contact__k {
+  font-family: var(--font-mono);
+  font-size: var(--t-micro);
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+.contact__v {
+  font-family: var(--font-mono);
+  font-size: var(--t-sm);
+  color: var(--accent);
+}
+.contact a:hover .contact__v { color: var(--text); }
+
+.map {
+  aspect-ratio: 16 / 9;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--line-soft);
+  background:
+    repeating-linear-gradient(90deg, transparent 0 47px, var(--line) 47px 48px),
+    repeating-linear-gradient(0deg, transparent 0 47px, var(--line) 47px 48px),
+    var(--surface-2);
+  max-height: 22rem;
+}
+
+/* ---------- closer ---------- */
+/* The one place the red goes full-bleed. Everything above it stays quiet
+   so this reads as the end of the page and the last chance to book. */
+.closer {
+  padding-block: clamp(4rem, 11vw, 8rem);
+  background: var(--accent);
+  color: var(--on-accent);
+  text-align: center;
+}
+.closer .btn--accent {
+  background: var(--on-accent);
+  color: var(--accent);
+}
+.closer .btn--accent:hover {
+  background: color-mix(in srgb, var(--on-accent) 86%, var(--accent));
+}
+.closer .btn--ghost {
+  border-color: color-mix(in srgb, var(--on-accent) 45%, transparent);
+  color: var(--on-accent);
+}
+.closer .btn--ghost:hover {
+  border-color: var(--on-accent);
+  color: var(--on-accent);
+}
+.closer__title {
+  font-family: var(--font-display);
+  font-size: clamp(2.5rem, 12vw, 6rem);
+  font-weight: 800;
+  letter-spacing: -0.045em;
+  line-height: 0.95;
+}
+.closer__sub {
+  /* Full strength: softening this to 82% dropped it to 4.05:1 on the lifted
+     red of the dark theme. Size and weight carry the hierarchy instead. */
+  color: var(--on-accent);
+  max-width: 34ch;
+  margin: 1rem auto clamp(1.5rem, 4vw, 2rem);
+}
+.closer .hero__cta { justify-content: center; }
+
+/* ---------- footer ---------- */
+.foot {
+  border-top: 1px solid var(--line-soft);
+  padding-block: clamp(2rem, 6vw, 3rem);
+  padding-bottom: calc(clamp(2rem, 6vw, 3rem) + 5.5rem);
+  background: var(--ground);
+}
+.foot__inner { display: grid; gap: 0.6rem; }
+.foot__mark { display: grid; justify-items: start; }
+.foot__descriptor {
+  font-family: var(--font-mono);
+  font-size: 0.5625rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  margin-top: 0.4rem;
+}
+.foot__meta { font-size: var(--t-sm); color: var(--text-dim); }
+.foot__poc { font-family: var(--font-mono); font-size: var(--t-micro); color: var(--text-faint); letter-spacing: 0.06em; }
+
+/* ---------- mobile action dock ---------- */
+.dock {
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  z-index: 70;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.5rem;
+  padding: 0.6rem var(--pad);
+  padding-bottom: calc(0.6rem + env(safe-area-inset-bottom));
+  background: color-mix(in srgb, var(--ground) 94%, transparent);
+  backdrop-filter: blur(14px);
+  border-top: 1px solid var(--line-soft);
+  transform: translateY(110%);
+  transition: transform 0.35s var(--ease);
+}
+.dock.is-up { transform: translateY(0); }
+
+.dock__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 3rem;
+  padding: 0 1.25rem;
+  font-family: var(--font-display);
+  font-size: var(--t-sm);
+  font-weight: 700;
+  text-decoration: none;
+}
+.dock__btn--call { border: 1px solid var(--line); color: var(--text); }
+.dock__btn--book { background: var(--accent); color: var(--on-accent); }
+
+/* ---------- reveal animation ---------- */
+.reveal {
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 0.65s var(--ease), transform 0.65s var(--ease);
+  transition-delay: calc(var(--d, 0) * 90ms);
+}
+.reveal.is-in { opacity: 1; transform: none; }
+
+/* ==========================================================================
+   Breakpoints
+   ========================================================================== */
+
+@media (min-width: 34rem) {
+  .facts { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .facts__item:nth-child(3) { border-left: 1px solid var(--line-soft); padding-left: var(--gap); }
+  .facts__item:nth-child(n+3) { border-top: 0; }
+  .cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .gallery { grid-auto-columns: 40%; }
+  .hero__cta .btn { flex: 0 0 auto; }
+}
+
+@media (min-width: 48rem) {
+  .visit { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(2rem, 6vw, 4rem); }
+  .bio { grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); align-items: start; }
+  .gallery { grid-auto-columns: 30%; }
+  .dock { display: none; }
+  .foot { padding-bottom: clamp(2rem, 6vw, 3rem); }
+}
+
+@media (min-width: 60rem) {
+  .hide-sm { display: inline-flex; }
+  .burger { display: none; }
+  .drawer { display: none !important; }
+
+  .nav-desk {
+    display: flex;
+    gap: 0.6rem;
+  }
+  /* Padding rather than gap, so short labels like "Visit" still present a
+     44px-wide target instead of just their text width. */
+  .nav-desk a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 2.75rem;
+    min-width: 2.75rem;
+    padding-inline: 0.6rem;
+    font-family: var(--font-display);
+    font-size: var(--t-sm);
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    text-decoration: none;
+    color: var(--text-dim);
+    transition: color 0.2s var(--ease);
+  }
+  .nav-desk a:hover { color: var(--text); }
+
+  .split {
+    grid-template-columns: 12rem minmax(0, 1fr);
+    gap: clamp(2rem, 5vw, 4rem);
+  }
+  .split__rail { position: sticky; top: 6rem; align-self: start; }
+
+  .hero__inner { padding-bottom: clamp(3.5rem, 7vw, 5rem); }
+  .cards { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .gallery {
+    grid-auto-flow: row;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    overflow: visible;
+    margin-inline: 0;
+    padding-inline: 0;
+  }
+}
+
+@media (max-width: 59.99rem) {
+  .hide-sm { display: none; }
+}
+
+/* ---------- motion preferences ---------- */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+  .reveal { opacity: 1; transform: none; }
+  .dock { transition: none; }
+}
+
+</style>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="masthead" id="masthead">
+  <div class="masthead__inner shell">
+    <a class="wordmark" href="#top" aria-label="Kerp Barbershop and Salon, home">
+      <span class="wordmark__lockup" aria-hidden="true">
+        <span class="wordmark__disc">K</span><span class="wordmark__erp">erp</span>
+      </span>
+      <span class="wordmark__sub" aria-hidden="true">Barbershop &amp; Salon</span>
+    </a>
+
+    <nav class="nav-desk" aria-label="Primary">
+      <a href="#services">Services</a>
+      <a href="#prices">Prices</a>
+      <a href="#ricardo">The barber</a>
+      <a href="#work">Work</a>
+      <a href="#visit">Visit</a>
+    </nav>
+
+    <div class="masthead__actions">
+      <a class="btn btn--accent btn--sm hide-sm" href="https://www.fresha.com/lvp/kerp-salon-barbershop-and-hair-salon-mens-and-womens-services-downtown-vancouver-NoJKM7" target="_blank" rel="noopener">Book</a>
+      <button class="burger" id="burger" type="button" aria-expanded="false" aria-controls="drawer" aria-label="Open menu">
+        <span class="burger__box"><span class="burger__bar"></span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="drawer" id="drawer" hidden>
+  <nav class="drawer__nav" aria-label="Mobile">
+    <a href="#services"><span class="drawer__label">Services</span><span class="drawer__meta">Cuts, shaves, colour</span></a>
+    <a href="#prices"><span class="drawer__label">Prices</span><span class="drawer__meta">Full list</span></a>
+    <a href="#ricardo"><span class="drawer__label">The barber</span><span class="drawer__meta">Ricardo, 25 years</span></a>
+    <a href="#work"><span class="drawer__label">Work</span><span class="drawer__meta">Recent cuts</span></a>
+    <a href="#visit"><span class="drawer__label">Visit</span><span class="drawer__meta">Hours &amp; directions</span></a>
+  </nav>
+  <div class="drawer__foot">
+    <a class="btn btn--accent btn--block" href="https://www.fresha.com/lvp/kerp-salon-barbershop-and-hair-salon-mens-and-womens-services-downtown-vancouver-NoJKM7" target="_blank" rel="noopener">Book online</a>
+    <a class="btn btn--ghost btn--block" href="tel:+16046850649">Call (604) 685-0649</a>
+  </div>
+</div>
+
+<main id="main">
+
+  <!-- ───────────────────────── hero ───────────────────────── -->
+  <section class="hero" id="top">
+    <canvas class="hero__canvas" id="heroCanvas" aria-hidden="true"></canvas>
+    <div class="hero__inner shell">
+      <p class="eyebrow reveal" data-d="0">524 W Pender St · Downtown Vancouver</p>
+
+      <h1 class="hero__title reveal" data-d="1">
+        Twenty&#8209;five years<br>behind the chair.
+      </h1>
+
+      <p class="hero__lede reveal" data-d="2">
+        Ricardo cuts classic and modern at Kerp — a two&#8209;chair shop on West Pender where
+        every haircut ends with a wash, a proper style, and a mirror check you actually agree with.
+      </p>
+
+      <div class="hero__cta reveal" data-d="3">
+        <a class="btn btn--accent" href="https://www.fresha.com/lvp/kerp-salon-barbershop-and-hair-salon-mens-and-womens-services-downtown-vancouver-NoJKM7" target="_blank" rel="noopener">Book online</a>
+        <a class="btn btn--ghost" href="tel:+16046850649">Call the shop</a>
+      </div>
+
+      <p class="status reveal" data-d="4" id="status" data-empty="true">
+        <span class="status__dot" aria-hidden="true"></span>
+        <span class="status__text">Checking today’s hours…</span>
+      </p>
+    </div>
+
+    <dl class="facts shell">
+      <div class="facts__item">
+        <dt>Rating</dt>
+        <dd><span class="facts__big">4.9</span> <span class="facts__unit">from 124 reviews</span></dd>
+      </div>
+      <div class="facts__item">
+        <dt>Walk-ins</dt>
+        <dd><span class="facts__big">No</span> <span class="facts__unit">appointments only</span></dd>
+      </div>
+      <div class="facts__item">
+        <dt>Haircut from</dt>
+        <dd><span class="facts__big">$55</span> <span class="facts__unit">wash &amp; style included</span></dd>
+      </div>
+      <div class="facts__item">
+        <dt>Access</dt>
+        <dd><span class="facts__big">Step&#8209;free</span> <span class="facts__unit">debit &amp; card</span></dd>
+      </div>
+    </dl>
+  </section>
+
+  <!-- ───────────────────────── services ───────────────────────── -->
+  <section class="section" id="services">
+    <div class="shell split">
+      <div class="split__rail">
+        <p class="rail-label">Services</p>
+      </div>
+      <div class="split__body">
+        <h2 class="h2 reveal">Four things, done properly.</h2>
+        <p class="lede reveal">
+          Kerp is a barbershop and a salon in the same room. Men’s and women’s services,
+          the same standard either side of the chair.
+        </p>
+
+        <ul class="cards reveal">
+          <li class="card">
+            <h3 class="card__title">Cuts &amp; fades</h3>
+            <p class="card__body">Skin fades, tapers, scissor work and grown-out shapes that still look deliberate at week six.</p>
+            <p class="card__price">from $55</p>
+          </li>
+          <li class="card">
+            <h3 class="card__title">Beard &amp; shave</h3>
+            <p class="card__body">Hot towel, straight razor, and a beard line that follows your jaw rather than fighting it.</p>
+            <p class="card__price">from $40</p>
+          </li>
+          <li class="card">
+            <h3 class="card__title">Colour</h3>
+            <p class="card__body">Root touch-ups, full-head highlights, grey blending and correction work. Consultation first, always.</p>
+            <p class="card__price">from $70</p>
+          </li>
+          <li class="card">
+            <h3 class="card__title">Perms &amp; smoothing</h3>
+            <p class="card__body">Cold perm, iron perm and straightening — booked with a patch test and a realistic timeline.</p>
+            <p class="card__price">from $130</p>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────────────────────── prices ───────────────────────── -->
+  <section class="section section--alt" id="prices">
+    <div class="shell split">
+      <div class="split__rail">
+        <p class="rail-label">Prices</p>
+      </div>
+      <div class="split__body">
+        <h2 class="h2 reveal">The whole list, no asterisks.</h2>
+
+        <div class="tabs reveal">
+          <div class="tabs__list" role="tablist" aria-label="Price list">
+            <button class="tab" role="tab" id="tab-barber" aria-controls="panel-barber" aria-selected="true" type="button">Barbering</button>
+            <button class="tab" role="tab" id="tab-colour" aria-controls="panel-colour" aria-selected="false" tabindex="-1" type="button">Colour &amp; styling</button>
+          </div>
+
+          <div class="panel" role="tabpanel" id="panel-barber" aria-labelledby="tab-barber" tabindex="0">
+            <dl class="price">
+              <div class="price__row"><dt>Haircut</dt><dd>$55 – 75</dd></div>
+              <div class="price__row"><dt>Long hair</dt><dd>$75</dd></div>
+              <div class="price__row"><dt>Haircut &amp; beard</dt><dd>$95</dd></div>
+              <div class="price__row"><dt>Haircut &amp; shave</dt><dd>$110</dd></div>
+              <div class="price__row"><dt>Beard or head shave</dt><dd>$40</dd></div>
+              <div class="price__row"><dt>Clean shave</dt><dd>$45</dd></div>
+              <div class="price__row"><dt>Buzzcut</dt><dd>$30</dd></div>
+              <div class="price__row"><dt>Line up</dt><dd>$15+</dd></div>
+              <div class="price__row"><dt>Boys 12 &amp; under · Seniors</dt><dd>$40</dd></div>
+            </dl>
+          </div>
+
+          <div class="panel" role="tabpanel" id="panel-colour" aria-labelledby="tab-colour" tabindex="0" hidden>
+            <dl class="price">
+              <div class="price__row"><dt>Colour</dt><dd>$70+</dd></div>
+              <div class="price__row"><dt>Colour, above shoulder</dt><dd>$125+</dd></div>
+              <div class="price__row"><dt>Root touch up</dt><dd>$100+</dd></div>
+              <div class="price__row"><dt>Highlights, partial</dt><dd>$145+</dd></div>
+              <div class="price__row"><dt>Highlights, full head</dt><dd>$210+</dd></div>
+              <div class="price__row"><dt>Bleach</dt><dd>$100+</dd></div>
+              <div class="price__row"><dt>Bleach added to a service</dt><dd>$20+</dd></div>
+              <div class="price__row"><dt>Wash &amp; style</dt><dd>$45+</dd></div>
+              <div class="price__row"><dt>Cold perm</dt><dd>$130+</dd></div>
+              <div class="price__row"><dt>Iron perm</dt><dd>$160+</dd></div>
+              <div class="price__row"><dt>Straightening</dt><dd>$180+</dd></div>
+              <div class="price__row"><dt>Girls 12 &amp; under</dt><dd>$50+</dd></div>
+            </dl>
+          </div>
+        </div>
+
+        <p class="note reveal">
+          Longer, denser or more damaged hair takes more time and more product, so colour and
+          chemical services are quoted from. You’ll hear the number before anything starts.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────────────────────── the barber ───────────────────────── -->
+  <section class="section" id="ricardo">
+    <div class="shell split">
+      <div class="split__rail">
+        <p class="rail-label">The barber</p>
+      </div>
+      <div class="split__body">
+        <div class="bio reveal">
+          <div class="bio__portrait" role="img" aria-label="Portrait of Ricardo, placeholder image">
+            <span class="ph-tag">Photo</span>
+          </div>
+          <div class="bio__text">
+            <h2 class="h2">Ricardo</h2>
+            <p>
+              A Spanish barber who picked up his first pair of shears twenty-five years ago and
+              never really put them down. Kerp was an idea he carried for years before it became
+              a room on West Pender.
+            </p>
+            <p>
+              He also teaches — private master classes and advanced workshops for barbers who want
+              their fades to stop being an argument with the clipper.
+            </p>
+            <a class="link-arrow" href="#visit">Book a master class<span aria-hidden="true">→</span></a>
+          </div>
+        </div>
+
+        <div class="themes reveal">
+          <p class="themes__head">What clients mention most <span class="themes__src">— across 124 public reviews</span></p>
+          <ul class="chips">
+            <li>Precise fades</li>
+            <li>Sharp lines</li>
+            <li>Actually listens</li>
+            <li>Fair price</li>
+            <li>No rush</li>
+            <li>Same cut every time</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────────────────────── work ───────────────────────── -->
+  <section class="section section--alt" id="work">
+    <div class="shell split">
+      <div class="split__rail">
+        <p class="rail-label">Work</p>
+      </div>
+      <div class="split__body">
+        <h2 class="h2 reveal">Recent cuts.</h2>
+        <p class="lede reveal">A normal week in the chair. Shop photography drops straight into this grid — the tiles below are placeholders for the proof of concept.</p>
+        <ul class="gallery reveal" tabindex="0" aria-label="Recent cuts, scrollable">
+          <li class="shot shot--a"><span class="ph-tag">Skin fade</span></li>
+          <li class="shot shot--b"><span class="ph-tag">Scissor crop</span></li>
+          <li class="shot shot--c"><span class="ph-tag">Beard shape</span></li>
+          <li class="shot shot--d"><span class="ph-tag">Balayage</span></li>
+          <li class="shot shot--e"><span class="ph-tag">Textured quiff</span></li>
+          <li class="shot shot--f"><span class="ph-tag">Blunt bob</span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────────────────────── visit ───────────────────────── -->
+  <section class="section" id="visit">
+    <div class="shell split">
+      <div class="split__rail">
+        <p class="rail-label">Visit</p>
+      </div>
+      <div class="split__body">
+        <h2 class="h2 reveal">524 W Pender St.</h2>
+
+        <div class="visit reveal">
+          <div class="visit__col">
+            <h3 class="h3">Hours</h3>
+            <table class="hours">
+              <caption class="sr-only">Opening hours, Pacific time</caption>
+              <tbody>
+                <tr data-day="1"><th scope="row">Monday</th><td>10:00 – 19:00</td></tr>
+                <tr data-day="2"><th scope="row">Tuesday</th><td>10:00 – 19:00</td></tr>
+                <tr data-day="3"><th scope="row">Wednesday</th><td>10:00 – 19:00</td></tr>
+                <tr data-day="4"><th scope="row">Thursday</th><td>10:00 – 19:00</td></tr>
+                <tr data-day="5"><th scope="row">Friday</th><td>10:00 – 19:00</td></tr>
+                <tr data-day="6"><th scope="row">Saturday</th><td>10:00 – 18:00</td></tr>
+                <tr data-day="0"><th scope="row">Sunday</th><td class="hours__shut">Closed</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="visit__col">
+            <h3 class="h3">Getting here</h3>
+            <address class="addr">
+              524 W Pender St<br>
+              Vancouver, BC&nbsp;&nbsp;V6B 1V3
+            </address>
+            <p class="note note--tight">Two blocks from Granville Station. Street parking on Richards after 18:00.</p>
+            <ul class="contact">
+              <li><a href="tel:+16046850649"><span class="contact__k">Phone</span><span class="contact__v">(604) 685-0649</span></a></li>
+              <li><a href="mailto:info@kerp.ca"><span class="contact__k">Email</span><span class="contact__v">info@kerp.ca</span></a></li>
+              <li><a href="https://www.fresha.com/lvp/kerp-salon-barbershop-and-hair-salon-mens-and-womens-services-downtown-vancouver-NoJKM7" target="_blank" rel="noopener"><span class="contact__k">Booking</span><span class="contact__v">Fresha</span></a></li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="map reveal" role="img" aria-label="Map of 524 West Pender Street, placeholder">
+          <span class="ph-tag">Map embed</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────────────────────── closing cta ───────────────────────── -->
+  <section class="closer">
+    <div class="shell">
+      <h2 class="closer__title reveal">Chair’s free.</h2>
+      <p class="closer__sub reveal">Appointments only, so grab a slot — online any time, or call during shop hours.</p>
+      <div class="hero__cta reveal">
+        <a class="btn btn--accent" href="https://www.fresha.com/lvp/kerp-salon-barbershop-and-hair-salon-mens-and-womens-services-downtown-vancouver-NoJKM7" target="_blank" rel="noopener">Book online</a>
+        <a class="btn btn--ghost" href="tel:+16046850649">(604) 685-0649</a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="foot">
+  <div class="shell foot__inner">
+    <p class="foot__mark">
+      <span class="wordmark__lockup" aria-hidden="true">
+        <span class="wordmark__disc">K</span><span class="wordmark__erp">erp</span>
+      </span>
+      <span class="sr-only">Kerp</span>
+      <span class="foot__descriptor">Barbershop &amp; Salon</span>
+    </p>
+    <p class="foot__meta">524 W Pender St, Vancouver BC · info@kerp.ca · (604) 685-0649</p>
+    <p class="foot__poc">Design proof of concept — not the live kerp.ca.</p>
+  </div>
+</footer>
+
+<div class="dock" aria-label="Quick actions">
+  <a class="dock__btn dock__btn--call" href="tel:+16046850649">Call</a>
+  <a class="dock__btn dock__btn--book" href="https://www.fresha.com/lvp/kerp-salon-barbershop-and-hair-salon-mens-and-womens-services-downtown-vancouver-NoJKM7" target="_blank" rel="noopener">Book online</a>
+</div>
+<script>
+/* ==========================================================================
+   Kerp Barbershop & Salon — proof of concept
+   No dependencies. Everything degrades to a readable static page.
+   ========================================================================== */
+(function () {
+  'use strict';
+
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---------------------------------------------------------------- nav */
+  var burger = document.getElementById('burger');
+  var drawer = document.getElementById('drawer');
+  var masthead = document.getElementById('masthead');
+
+  function setDrawer(open) {
+    burger.setAttribute('aria-expanded', String(open));
+    burger.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+    drawer.hidden = !open;
+    document.body.classList.toggle('is-locked', open);
+    if (open) {
+      var first = drawer.querySelector('a');
+      if (first) first.focus();
+    }
+  }
+
+  burger.addEventListener('click', function () {
+    setDrawer(burger.getAttribute('aria-expanded') !== 'true');
+  });
+
+  drawer.addEventListener('click', function (e) {
+    if (e.target.closest('a')) setDrawer(false);
+  });
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && burger.getAttribute('aria-expanded') === 'true') {
+      setDrawer(false);
+      burger.focus();
+    }
+  });
+
+  // The drawer is a mobile affordance; a resize past the desktop breakpoint closes it.
+  window.matchMedia('(min-width: 60rem)').addEventListener('change', function (e) {
+    if (e.matches) setDrawer(false);
+  });
+
+  /* --------------------------------------------------- scroll behaviour */
+  var dock = document.querySelector('.dock');
+  var lastY = window.scrollY;
+
+  function onScroll() {
+    var y = window.scrollY;
+    masthead.classList.toggle('is-stuck', y > 8);
+    // Dock appears once the hero CTAs have scrolled away, hides again at the top.
+    dock.classList.toggle('is-up', y > 420);
+    lastY = y;
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  /* ---------------------------------------------------------- open/shut */
+  // Mon–Fri 10:00–19:00, Sat 10:00–18:00, Sun closed. Shop time is America/Vancouver.
+  var HOURS = {
+    0: null,
+    1: [600, 1140], 2: [600, 1140], 3: [600, 1140], 4: [600, 1140], 5: [600, 1140],
+    6: [600, 1080]
+  };
+  var DAY_NAME = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
+  function shopNow() {
+    var parts;
+    try {
+      parts = new Intl.DateTimeFormat('en-CA', {
+        timeZone: 'America/Vancouver',
+        weekday: 'short', hour: '2-digit', minute: '2-digit', hour12: false
+      }).formatToParts(new Date());
+    } catch (err) {
+      return null; // no Intl time zone data — leave the static hours table to speak
+    }
+    var map = {};
+    parts.forEach(function (p) { map[p.type] = p.value; });
+    var idx = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].indexOf(map.weekday);
+    var hour = parseInt(map.hour, 10) % 24;
+    return { day: idx, mins: hour * 60 + parseInt(map.minute, 10) };
+  }
+
+  function clock(mins) {
+    var h = Math.floor(mins / 60), m = mins % 60;
+    var suffix = h >= 12 ? 'pm' : 'am';
+    var h12 = h % 12 === 0 ? 12 : h % 12;
+    return h12 + (m ? ':' + String(m).padStart(2, '0') : '') + suffix;
+  }
+
+  function nextOpening(day) {
+    for (var i = 1; i <= 7; i++) {
+      var d = (day + i) % 7;
+      if (HOURS[d]) {
+        return (i === 1 ? 'tomorrow' : DAY_NAME[d]) + ' at ' + clock(HOURS[d][0]);
+      }
+    }
+    return null;
+  }
+
+  var statusEl = document.getElementById('status');
+  var now = shopNow();
+
+  if (now) {
+    var today = HOURS[now.day];
+    var text = statusEl.querySelector('.status__text');
+    statusEl.removeAttribute('data-empty');
+
+    if (today && now.mins >= today[0] && now.mins < today[1]) {
+      statusEl.classList.add('is-open');
+      text.textContent = 'Open now · until ' + clock(today[1]);
+    } else {
+      statusEl.classList.add('is-shut');
+      if (today && now.mins < today[0]) {
+        text.textContent = 'Closed · opens today at ' + clock(today[0]);
+      } else {
+        var next = nextOpening(now.day);
+        text.textContent = next ? 'Closed · opens ' + next : 'Closed';
+      }
+    }
+
+    var row = document.querySelector('.hours tr[data-day="' + now.day + '"]');
+    if (row) row.classList.add('is-today');
+  } else {
+    statusEl.hidden = true;
+  }
+
+  /* -------------------------------------------------------------- tabs */
+  var tabs = Array.prototype.slice.call(document.querySelectorAll('.tab'));
+
+  function selectTab(tab) {
+    tabs.forEach(function (t) {
+      var on = t === tab;
+      t.setAttribute('aria-selected', String(on));
+      t.tabIndex = on ? 0 : -1;
+      document.getElementById(t.getAttribute('aria-controls')).hidden = !on;
+    });
+  }
+
+  tabs.forEach(function (tab, i) {
+    tab.addEventListener('click', function () { selectTab(tab); });
+    tab.addEventListener('keydown', function (e) {
+      var dir = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0;
+      if (!dir) return;
+      e.preventDefault();
+      var next = tabs[(i + dir + tabs.length) % tabs.length];
+      selectTab(next);
+      next.focus();
+    });
+  });
+
+  /* ------------------------------------------------------------ reveal */
+  var reveals = Array.prototype.slice.call(document.querySelectorAll('.reveal'));
+  reveals.forEach(function (el) {
+    if (el.dataset.d) el.style.setProperty('--d', el.dataset.d);
+  });
+
+  if (reduceMotion || !('IntersectionObserver' in window)) {
+    reveals.forEach(function (el) { el.classList.add('is-in'); });
+  } else {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-in');
+          io.unobserve(entry.target);
+        }
+      });
+    }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+    reveals.forEach(function (el) { io.observe(el); });
+  }
+
+  /* ------------------------------------------------------- hero canvas */
+  // A slow diagonal drift of neutral bands with the occasional accent one —
+  // the barber pole, dialled almost all the way down. Colours come from the
+  // brand tokens, so re-skinning the CSS re-skins this too.
+  var canvas = document.getElementById('heroCanvas');
+  var ctx = canvas.getContext && canvas.getContext('2d');
+
+  if (ctx) {
+    var PERIOD = 340;
+    var ANGLE = -22 * Math.PI / 180;
+    var bands = [];
+    var seed = 7;
+
+    // Deterministic pseudo-random so the pattern is stable across reloads.
+    function rnd() {
+      seed = (seed * 1103515245 + 12345) % 2147483648;
+      return seed / 2147483648;
+    }
+
+    var cursor = 0;
+    while (cursor < PERIOD) {
+      var w = 2 + rnd() * 26;
+      bands.push({ x: cursor, w: w, a: 0.012 + rnd() * 0.026, accent: rnd() > 0.86 });
+      cursor += w + 4 + rnd() * 34;
+    }
+
+    var css = getComputedStyle(document.documentElement);
+    var tint = { steel: '#ffffff', accent: '#C69B4E', scale: 1 };
+
+    function readTint() {
+      tint.accent = (css.getPropertyValue('--accent') || '#C69B4E').trim();
+      // Bands lighten a dark ground and darken a light one.
+      var light = getComputedStyle(document.documentElement).colorScheme.indexOf('light') > -1;
+      tint.steel = light ? '#3B2F30' : '#ffffff';
+      tint.scale = light ? 0.7 : 1;
+    }
+    readTint();
+
+    var w = 0, h = 0, phase = 0, raf = null, visible = true;
+
+    function resize() {
+      var dpr = Math.min(window.devicePixelRatio || 1, 2);
+      var rect = canvas.getBoundingClientRect();
+      w = rect.width; h = rect.height;
+      if (!w || !h) return;
+      canvas.width = Math.round(w * dpr);
+      canvas.height = Math.round(h * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      draw();
+    }
+
+    function draw() {
+      if (!w || !h) return;
+      ctx.clearRect(0, 0, w, h);
+      var span = w + h;
+      ctx.save();
+      ctx.translate(w / 2, h / 2);
+      ctx.rotate(ANGLE);
+      var start = -span;
+      for (var base = start; base < span; base += PERIOD) {
+        for (var i = 0; i < bands.length; i++) {
+          var b = bands[i];
+          var x = base + b.x + (phase % PERIOD);
+          if (x > span || x < start - PERIOD) continue;
+          ctx.globalAlpha = b.a * tint.scale * (b.accent ? 1.5 : 1);
+          ctx.fillStyle = b.accent ? tint.accent : tint.steel;
+          ctx.fillRect(x, -span, b.w, span * 2);
+        }
+      }
+      ctx.restore();
+      ctx.globalAlpha = 1;
+    }
+
+    function tick() {
+      phase += 0.16;
+      draw();
+      raf = visible ? requestAnimationFrame(tick) : null;
+    }
+
+    var ro = 'ResizeObserver' in window ? new ResizeObserver(resize) : null;
+    if (ro) ro.observe(canvas); else window.addEventListener('resize', resize);
+    resize();
+
+    if (!reduceMotion) {
+      if ('IntersectionObserver' in window) {
+        new IntersectionObserver(function (entries) {
+          visible = entries[0].isIntersecting;
+          if (visible && !raf) raf = requestAnimationFrame(tick);
+        }, { threshold: 0 }).observe(canvas);
+      }
+      raf = requestAnimationFrame(tick);
+    }
+
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function () {
+      readTint();
+      draw();
+    });
+  }
+})();
+
+</script>
