@@ -68,7 +68,7 @@
   --t-lede:  clamp(1.0625rem, 1rem + 0.4vw, 1.25rem);
   --t-h3:    clamp(1.0625rem, 1rem + 0.35vw, 1.1875rem);
   --t-h2:    clamp(1.75rem, 1.35rem + 2vw, 2.75rem);
-  --t-h1:    clamp(2.75rem, 1.6rem + 8.4vw, 6.5rem);
+  --t-h1:    clamp(2.125rem, 1.25rem + 4.4vw, 4rem);
 
   --gap:  clamp(1.25rem, 4vw, 2rem);
   --bay:  clamp(3.5rem, 9vw, 7rem);
@@ -534,9 +534,11 @@ a { color: inherit; }
   font-family: var(--font-display);
   font-size: var(--t-h1);
   font-weight: 800;
-  letter-spacing: -0.045em;
-  line-height: 0.93;
+  letter-spacing: -0.04em;
+  line-height: 0.98;
   margin-top: -0.25rem;
+  text-wrap: balance;
+  max-width: 18ch;
 }
 
 .hero__lede {
@@ -1064,7 +1066,7 @@ a { color: inherit; }
     <nav class="nav-desk" aria-label="Primary">
       <a href="#services">Services</a>
       <a href="#prices">Prices</a>
-      <a href="#ricardo">The barber</a>
+      <a href="#about">About</a>
       <a href="#work">Work</a>
       <a href="#visit">Visit</a>
     </nav>
@@ -1082,7 +1084,7 @@ a { color: inherit; }
   <nav class="drawer__nav" aria-label="Mobile">
     <a href="#services"><span class="drawer__label">Services</span><span class="drawer__meta">Cuts, shaves, colour</span></a>
     <a href="#prices"><span class="drawer__label">Prices</span><span class="drawer__meta">Full list</span></a>
-    <a href="#ricardo"><span class="drawer__label">The barber</span><span class="drawer__meta">Ricardo, 25 years</span></a>
+    <a href="#about"><span class="drawer__label">About</span><span class="drawer__meta">Who we are</span></a>
     <a href="#work"><span class="drawer__label">Work</span><span class="drawer__meta">Recent cuts</span></a>
     <a href="#visit"><span class="drawer__label">Visit</span><span class="drawer__meta">Hours &amp; directions</span></a>
   </nav>
@@ -1101,12 +1103,12 @@ a { color: inherit; }
       <p class="eyebrow reveal" data-d="0">1140 W Pender St · Downtown Vancouver</p>
 
       <h1 class="hero__title reveal" data-d="1">
-        Twenty&#8209;five years<br>behind the chair.
+        Getting a haircut is more than just getting a haircut.
       </h1>
 
       <p class="hero__lede reveal" data-d="2">
-        Ricardo has been cutting hair for twenty-five years. Every cut comes with a wash
-        and a style, and we take the time to get it right.
+        We offer you, our client, a professional experience, from traditional classic
+        styles to the latest trendy modern haircuts.
       </p>
 
       <div class="hero__cta reveal" data-d="3">
@@ -1234,27 +1236,34 @@ a { color: inherit; }
   </section>
 
   <!-- ───────────────────────── the barber ───────────────────────── -->
-  <section class="section" id="ricardo">
+  <section class="section" id="about">
     <div class="shell split">
       <div class="split__rail">
-        <p class="rail-label">The barber</p>
+        <p class="rail-label">About</p>
       </div>
       <div class="split__body">
         <div class="bio reveal">
-          <div class="bio__portrait" role="img" aria-label="Portrait of Ricardo, placeholder image">
-            <span class="ph-tag">Photo</span>
+          <div class="bio__portrait" role="img" aria-label="Inside the shop, placeholder image">
+            <span class="ph-tag">Shop interior</span>
           </div>
           <div class="bio__text">
-            <h2 class="h2">Ricardo</h2>
+            <h2 class="h2">About us</h2>
             <p>
-              Ricardo trained as a barber in Spain and has been at it for twenty-five years.
-              Kerp was an idea he sat on for a long time before it became a room on West Pender.
+              Kerp Salon was an idea that was born many years ago and now, that idea comes to
+              life in Vancouver. When you come to us, we believe getting a haircut is more than
+              just getting a haircut. We offer you, our client, a professional experience. From
+              traditional classic styles to the latest trendy modern haircuts. To be able to
+              give our clients the experience they deserve, we offer everyone a complimentary
+              hair wash and styling of your finished haircut with our products. The staff at
+              Kerp Salon believe that along with professionalism, having fun and enjoying what
+              we do is an important key. Hairdressing is an art and each client&rsquo;s head is
+              a canvas for us to display our skills and to make you feel unique and fresh.
             </p>
             <p>
-              He also teaches. Private classes and workshops for barbers who want to sharpen
-              up their fades.
+              Our approach is simple, but we are experts in what we do. We will take care of you
+              and it will be an honour for us to groom your hair.
             </p>
-            <a class="link-arrow" href="#visit">Book a master class<span aria-hidden="true">→</span></a>
+            <a class="link-arrow" href="#work">See our work<span aria-hidden="true">→</span></a>
           </div>
         </div>
 
@@ -1332,7 +1341,7 @@ a { color: inherit; }
               Inside Sebastian1 Salon<br>
               Vancouver, BC
             </address>
-            <p class="note note--tight">Next to the Sun Life Building. We share a room with Sebastian1 Salon, so come in their front door and ask for Ricardo.</p>
+            <p class="note note--tight">Next to the Sun Life Building. We share a room with Sebastian1 Salon, so come in their front door and ask for Kerp.</p>
             <ul class="contact">
               <li><a href="tel:+16046850649"><span class="contact__k">Phone</span><span class="contact__v">(604) 685-0649</span></a></li>
               <li><a href="mailto:info@kerp.ca"><span class="contact__k">Email</span><span class="contact__v">info@kerp.ca</span></a></li>
