@@ -8,6 +8,38 @@
 <meta name="theme-color" content="#FAFAFA" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#141011" media="(prefers-color-scheme: dark)">
 <link rel="stylesheet" href="assets/css/kerp.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "HairSalon",
+  "name": "Kerp Barbershop & Salon",
+  "url": "https://kerp.ca",
+  "telephone": "+16046850649",
+  "email": "info@kerp.ca",
+  "priceRange": "$55 - $210",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "1140 West Pender St",
+    "addressLocality": "Vancouver",
+    "addressRegion": "BC",
+    "addressCountry": "CA"
+  },
+  "openingHoursSpecification": [
+    {
+      "@type": "OpeningHoursSpecification",
+      "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+      "opens": "10:00",
+      "closes": "19:00"
+    },
+    {
+      "@type": "OpeningHoursSpecification",
+      "dayOfWeek": "Saturday",
+      "opens": "10:00",
+      "closes": "18:00"
+    }
+  ]
+}
+</script>
 </head>
 <body>
 
@@ -89,8 +121,8 @@
       </h1>
 
       <p class="hero__lede reveal" data-d="2">
-        We offer you, our client, a professional experience, from traditional classic
-        styles to the latest trendy modern haircuts.
+        Traditional classic styles, the latest trendy modern haircuts, and a
+        complimentary wash and style with every cut.
       </p>
 
       <div class="hero__cta reveal" data-d="3">
@@ -98,10 +130,10 @@
         <a class="btn btn--ghost" href="tel:+16046850649">Call the shop</a>
       </div>
 
-      <p class="status reveal" data-d="4" id="status" data-empty="true">
+      <a class="status reveal" data-d="4" id="status" data-empty="true" href="#visit">
         <span class="status__dot" aria-hidden="true"></span>
         <span class="status__text">Checking today’s hours…</span>
-      </p>
+      </a>
     </div>
 
     <dl class="facts shell">
@@ -140,22 +172,22 @@
           <li class="card">
             <h3 class="card__title">Cuts &amp; fades</h3>
             <p class="card__body">Skin fades, tapers, scissor cuts, and tidying up something that’s grown out.</p>
-            <p class="card__price">from $55</p>
+            <a class="card__price" href="#prices" data-tab="tab-barber">from $55 · see all prices</a>
           </li>
           <li class="card">
             <h3 class="card__title">Beard &amp; shave</h3>
             <p class="card__body">Hot towel and a straight razor. Beard trims and shape-ups too.</p>
-            <p class="card__price">from $40</p>
+            <a class="card__price" href="#prices" data-tab="tab-barber">from $40 · see all prices</a>
           </li>
           <li class="card">
             <h3 class="card__title">Colour</h3>
             <p class="card__body">Root touch-ups, highlights, grey blending, and fixing colour that didn’t go to plan. We’ll talk it through first.</p>
-            <p class="card__price">from $70</p>
+            <a class="card__price" href="#prices" data-tab="tab-colour">from $70 · see all prices</a>
           </li>
           <li class="card">
             <h3 class="card__title">Perms &amp; smoothing</h3>
             <p class="card__body">Cold perm, iron perm, and straightening. These take a while, so book ahead.</p>
-            <p class="card__price">from $130</p>
+            <a class="card__price" href="#prices" data-tab="tab-colour">from $130 · see all prices</a>
           </li>
         </ul>
       </div>
@@ -324,6 +356,7 @@
               Vancouver, BC
             </address>
             <p class="note note--tight">Next to the Sun Life Building. We share a room with Sebastian1 Salon, so come in their front door and ask for Kerp.</p>
+            <a class="link-arrow" href="https://www.google.com/maps/search/?api=1&amp;query=1140+W+Pender+St%2C+Vancouver%2C+BC" target="_blank" rel="noopener">Get directions<span aria-hidden="true">→</span></a>
             <ul class="contact">
               <li><a href="tel:+16046850649"><span class="contact__k">Phone</span><span class="contact__v">(604) 685-0649</span></a></li>
               <li><a href="mailto:info@kerp.ca"><span class="contact__k">Email</span><span class="contact__v">info@kerp.ca</span></a></li>
@@ -332,9 +365,9 @@
           </div>
         </div>
 
-        <div class="map reveal" role="img" aria-label="Map of 1140 West Pender Street, placeholder">
-          <span class="ph-tag">Map embed</span>
-        </div>
+        <a class="map reveal" href="https://www.google.com/maps/search/?api=1&amp;query=1140+W+Pender+St%2C+Vancouver%2C+BC" target="_blank" rel="noopener">
+          <span class="ph-tag">Open in Google Maps</span>
+        </a>
       </div>
     </div>
   </section>

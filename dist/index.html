@@ -577,10 +577,13 @@ a { color: inherit; }
   display: inline-flex;
   align-items: center;
   gap: 0.6rem;
+  min-height: 2.75rem;   /* it links to the hours, so it is a tap target */
   font-family: var(--font-mono);
   font-size: var(--t-sm);
   color: var(--text-dim);
+  text-decoration: none;
 }
+.status:hover .status__text { text-decoration: underline; text-underline-offset: 3px; }
 .status[data-empty="true"] { opacity: 0.5; }
 .status__dot {
   width: 7px; height: 7px;
@@ -672,12 +675,17 @@ a { color: inherit; }
 }
 .card__body { font-size: var(--t-sm); color: var(--text-dim); line-height: 1.55; }
 .card__price {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  min-height: 2.75rem;   /* it links into the price list, so it is a tap target */
   font-family: var(--font-mono);
   font-size: var(--t-sm);
   color: var(--text);
   font-variant-numeric: tabular-nums;
-  margin-top: 0.15rem;
+  text-decoration: none;
 }
+.card__price:hover { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }
 
 /* ---------- tabs + price list ---------- */
 .tabs__list {
@@ -865,12 +873,16 @@ a { color: inherit; }
   place-items: center;
   border: 1px solid var(--line-soft);
   border-radius: var(--r-lg);
+  text-decoration: none;
+  transition: border-color 0.2s var(--ease);
   background:
     repeating-linear-gradient(90deg, transparent 0 47px, var(--line) 47px 48px),
     repeating-linear-gradient(0deg, transparent 0 47px, var(--line) 47px 48px),
     var(--surface-2);
   max-height: 22rem;
 }
+.map:hover { border-color: var(--accent); }
+.map:hover .ph-tag { color: var(--accent); }
 
 /* ---------- closer ---------- */
 /* The one place the red goes full-bleed. Everything above it stays quiet
@@ -1056,6 +1068,38 @@ a { color: inherit; }
 }
 
 </style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "HairSalon",
+  "name": "Kerp Barbershop & Salon",
+  "url": "https://kerp.ca",
+  "telephone": "+16046850649",
+  "email": "info@kerp.ca",
+  "priceRange": "$55 - $210",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "1140 West Pender St",
+    "addressLocality": "Vancouver",
+    "addressRegion": "BC",
+    "addressCountry": "CA"
+  },
+  "openingHoursSpecification": [
+    {
+      "@type": "OpeningHoursSpecification",
+      "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+      "opens": "10:00",
+      "closes": "19:00"
+    },
+    {
+      "@type": "OpeningHoursSpecification",
+      "dayOfWeek": "Saturday",
+      "opens": "10:00",
+      "closes": "18:00"
+    }
+  ]
+}
+</script>
 </head>
 <body>
 
@@ -1137,8 +1181,8 @@ a { color: inherit; }
       </h1>
 
       <p class="hero__lede reveal" data-d="2">
-        We offer you, our client, a professional experience, from traditional classic
-        styles to the latest trendy modern haircuts.
+        Traditional classic styles, the latest trendy modern haircuts, and a
+        complimentary wash and style with every cut.
       </p>
 
       <div class="hero__cta reveal" data-d="3">
@@ -1146,10 +1190,10 @@ a { color: inherit; }
         <a class="btn btn--ghost" href="tel:+16046850649">Call the shop</a>
       </div>
 
-      <p class="status reveal" data-d="4" id="status" data-empty="true">
+      <a class="status reveal" data-d="4" id="status" data-empty="true" href="#visit">
         <span class="status__dot" aria-hidden="true"></span>
         <span class="status__text">Checking today’s hours…</span>
-      </p>
+      </a>
     </div>
 
     <dl class="facts shell">
@@ -1188,22 +1232,22 @@ a { color: inherit; }
           <li class="card">
             <h3 class="card__title">Cuts &amp; fades</h3>
             <p class="card__body">Skin fades, tapers, scissor cuts, and tidying up something that’s grown out.</p>
-            <p class="card__price">from $55</p>
+            <a class="card__price" href="#prices" data-tab="tab-barber">from $55 · see all prices</a>
           </li>
           <li class="card">
             <h3 class="card__title">Beard &amp; shave</h3>
             <p class="card__body">Hot towel and a straight razor. Beard trims and shape-ups too.</p>
-            <p class="card__price">from $40</p>
+            <a class="card__price" href="#prices" data-tab="tab-barber">from $40 · see all prices</a>
           </li>
           <li class="card">
             <h3 class="card__title">Colour</h3>
             <p class="card__body">Root touch-ups, highlights, grey blending, and fixing colour that didn’t go to plan. We’ll talk it through first.</p>
-            <p class="card__price">from $70</p>
+            <a class="card__price" href="#prices" data-tab="tab-colour">from $70 · see all prices</a>
           </li>
           <li class="card">
             <h3 class="card__title">Perms &amp; smoothing</h3>
             <p class="card__body">Cold perm, iron perm, and straightening. These take a while, so book ahead.</p>
-            <p class="card__price">from $130</p>
+            <a class="card__price" href="#prices" data-tab="tab-colour">from $130 · see all prices</a>
           </li>
         </ul>
       </div>
@@ -1372,6 +1416,7 @@ a { color: inherit; }
               Vancouver, BC
             </address>
             <p class="note note--tight">Next to the Sun Life Building. We share a room with Sebastian1 Salon, so come in their front door and ask for Kerp.</p>
+            <a class="link-arrow" href="https://www.google.com/maps/search/?api=1&amp;query=1140+W+Pender+St%2C+Vancouver%2C+BC" target="_blank" rel="noopener">Get directions<span aria-hidden="true">→</span></a>
             <ul class="contact">
               <li><a href="tel:+16046850649"><span class="contact__k">Phone</span><span class="contact__v">(604) 685-0649</span></a></li>
               <li><a href="mailto:info@kerp.ca"><span class="contact__k">Email</span><span class="contact__v">info@kerp.ca</span></a></li>
@@ -1380,9 +1425,9 @@ a { color: inherit; }
           </div>
         </div>
 
-        <div class="map reveal" role="img" aria-label="Map of 1140 West Pender Street, placeholder">
-          <span class="ph-tag">Map embed</span>
-        </div>
+        <a class="map reveal" href="https://www.google.com/maps/search/?api=1&amp;query=1140+W+Pender+St%2C+Vancouver%2C+BC" target="_blank" rel="noopener">
+          <span class="ph-tag">Open in Google Maps</span>
+        </a>
       </div>
     </div>
   </section>
@@ -1439,6 +1484,18 @@ a { color: inherit; }
     burger.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
     drawer.hidden = !open;
     document.body.classList.toggle('is-locked', open);
+    // The body is scroll-locked while the drawer is open, but without inert a
+    // keyboard user could still Tab into the page behind it and land on
+    // controls they cannot see. Announce bar and masthead stay reachable. The
+    // skip link is included: it jumps to #main, which is inert right now, so
+    // in this state it is a control that visibly focuses and then does nothing.
+    Array.prototype.forEach.call(
+      document.querySelectorAll('main, footer, .dock, .skip'),
+      function (region) {
+        if (open) region.setAttribute('inert', '');
+        else region.removeAttribute('inert');
+      }
+    );
     if (open) {
       var first = drawer.querySelector('a');
       if (first) first.focus();
@@ -1506,15 +1563,26 @@ a { color: inherit; }
   /* --------------------------------------------------- scroll behaviour */
   var dock = document.querySelector('.dock');
   var lastY = window.scrollY;
+  var closerOnScreen = false;
 
   function onScroll() {
     var y = window.scrollY;
     masthead.classList.toggle('is-stuck', y > 8);
-    // Dock appears once the hero CTAs have scrolled away, hides again at the top.
-    dock.classList.toggle('is-up', y > 420);
+    // Dock appears once the hero CTAs have scrolled away, hides at the top and
+    // while the closing band is on screen — that band is the CTA down there,
+    // and stacking a second pair of red buttons on top of it reads as noise.
+    dock.classList.toggle('is-up', y > 420 && !closerOnScreen);
     lastY = y;
   }
   window.addEventListener('scroll', onScroll, { passive: true });
+
+  var closerEl = document.querySelector('.closer');
+  if (closerEl && 'IntersectionObserver' in window) {
+    new IntersectionObserver(function (entries) {
+      closerOnScreen = entries[0].isIntersecting;
+      onScroll();
+    }, { threshold: 0.1 }).observe(closerEl);
+  }
   onScroll();
 
   /* ---------------------------------------------------------- open/shut */
@@ -1598,6 +1666,18 @@ a { color: inherit; }
       document.getElementById(t.getAttribute('aria-controls')).hidden = !on;
     });
   }
+
+  // Service-card prices deep-link into the list with the right tab open. The
+  // default #prices navigation then handles the scroll.
+  Array.prototype.forEach.call(
+    document.querySelectorAll('.card__price[data-tab]'),
+    function (link) {
+      link.addEventListener('click', function () {
+        var tab = document.getElementById(link.dataset.tab);
+        if (tab) selectTab(tab);
+      });
+    }
+  );
 
   tabs.forEach(function (tab, i) {
     tab.addEventListener('click', function () { selectTab(tab); });

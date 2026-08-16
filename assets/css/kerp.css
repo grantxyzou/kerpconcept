@@ -567,10 +567,13 @@ a { color: inherit; }
   display: inline-flex;
   align-items: center;
   gap: 0.6rem;
+  min-height: 2.75rem;   /* it links to the hours, so it is a tap target */
   font-family: var(--font-mono);
   font-size: var(--t-sm);
   color: var(--text-dim);
+  text-decoration: none;
 }
+.status:hover .status__text { text-decoration: underline; text-underline-offset: 3px; }
 .status[data-empty="true"] { opacity: 0.5; }
 .status__dot {
   width: 7px; height: 7px;
@@ -662,12 +665,17 @@ a { color: inherit; }
 }
 .card__body { font-size: var(--t-sm); color: var(--text-dim); line-height: 1.55; }
 .card__price {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  min-height: 2.75rem;   /* it links into the price list, so it is a tap target */
   font-family: var(--font-mono);
   font-size: var(--t-sm);
   color: var(--text);
   font-variant-numeric: tabular-nums;
-  margin-top: 0.15rem;
+  text-decoration: none;
 }
+.card__price:hover { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }
 
 /* ---------- tabs + price list ---------- */
 .tabs__list {
@@ -855,12 +863,16 @@ a { color: inherit; }
   place-items: center;
   border: 1px solid var(--line-soft);
   border-radius: var(--r-lg);
+  text-decoration: none;
+  transition: border-color 0.2s var(--ease);
   background:
     repeating-linear-gradient(90deg, transparent 0 47px, var(--line) 47px 48px),
     repeating-linear-gradient(0deg, transparent 0 47px, var(--line) 47px 48px),
     var(--surface-2);
   max-height: 22rem;
 }
+.map:hover { border-color: var(--accent); }
+.map:hover .ph-tag { color: var(--accent); }
 
 /* ---------- closer ---------- */
 /* The one place the red goes full-bleed. Everything above it stays quiet

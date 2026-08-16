@@ -7,6 +7,10 @@ automatically once they exist; nothing else needs editing.
 | --- | --- | --- |
 | `work-01.jpg` … `work-06.jpg` | the Recent cuts grid | **4:5 portrait** |
 | `shop.jpg` | the About section | **4:5 portrait** |
+| `entrance.jpg` | Getting here — a photo of the Sebastian1 Salon door | **4:5 portrait** |
+
+For a shop inside another salon, the entrance photo is the most useful image on the whole
+page: it answers "am I in the right place?" at the kerb. Worth shooting before the others.
 
 ## What to supply
 
