@@ -27,13 +27,27 @@ const inlined = html
     `\n<script>\n${js}\n</script>`
   );
 
-if (inlined.includes('assets/')) {
-  console.error('build: an asset reference survived inlining — check the paths in index.html');
+// Only the stylesheet and script are inlined. Image references are expected to
+// survive, and are served from the copied assets/img alongside the bundle.
+if (inlined.includes('assets/css/') || inlined.includes('assets/js/')) {
+  console.error('build: a stylesheet or script reference survived inlining — check the paths in index.html');
   process.exit(1);
 }
 
 fs.mkdirSync(path.join(root, 'dist'), { recursive: true });
 fs.writeFileSync(path.join(root, 'dist/index.html'), inlined);
+
+// Photos cannot be inlined without bloating the bundle, so copy them next to it
+// and keep the relative paths working.
+const imgSrc = path.join(root, 'assets/img');
+const imgOut = path.join(root, 'dist/assets/img');
+fs.rmSync(imgOut, { recursive: true, force: true });
+if (fs.existsSync(imgSrc)) {
+  fs.mkdirSync(imgOut, { recursive: true });
+  const photos = fs.readdirSync(imgSrc).filter((f) => /\.(jpe?g|png|webp|avif)$/i.test(f));
+  photos.forEach((f) => fs.copyFileSync(path.join(imgSrc, f), path.join(imgOut, f)));
+  console.log(`build: copied ${photos.length} photo(s) into dist/assets/img`);
+}
 
 // The Artifact host supplies <!doctype>, <html>, <head> and <body>, so hand it
 // the title, the style block and the body contents only.

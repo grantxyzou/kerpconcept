@@ -258,6 +258,9 @@ a { color: inherit; }
 .link-arrow:hover span { transform: translateX(4px); }
 
 .ph-tag {
+  grid-area: 1 / 1;
+  align-self: center;
+  justify-self: center;
   font-family: var(--font-mono);
   font-size: var(--t-micro);
   letter-spacing: 0.12em;
@@ -564,10 +567,13 @@ a { color: inherit; }
   display: inline-flex;
   align-items: center;
   gap: 0.6rem;
+  min-height: 2.75rem;   /* it links to the hours, so it is a tap target */
   font-family: var(--font-mono);
   font-size: var(--t-sm);
   color: var(--text-dim);
+  text-decoration: none;
 }
+.status:hover .status__text { text-decoration: underline; text-underline-offset: 3px; }
 .status[data-empty="true"] { opacity: 0.5; }
 .status__dot {
   width: 7px; height: 7px;
@@ -659,12 +665,17 @@ a { color: inherit; }
 }
 .card__body { font-size: var(--t-sm); color: var(--text-dim); line-height: 1.55; }
 .card__price {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  min-height: 2.75rem;   /* it links into the price list, so it is a tap target */
   font-family: var(--font-mono);
   font-size: var(--t-sm);
   color: var(--text);
   font-variant-numeric: tabular-nums;
-  margin-top: 0.15rem;
+  text-decoration: none;
 }
+.card__price:hover { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }
 
 /* ---------- tabs + price list ---------- */
 .tabs__list {
@@ -725,6 +736,7 @@ a { color: inherit; }
   aspect-ratio: 4 / 5;
   display: grid;
   place-items: center;
+  overflow: hidden;
   background:
     linear-gradient(148deg, var(--surface-2) 0%, var(--surface) 55%, var(--ground-deep) 100%);
   border: 1px solid var(--line-soft);
@@ -780,6 +792,7 @@ a { color: inherit; }
   place-items: center;
   border: 1px solid var(--line-soft);
   border-radius: var(--r-lg);
+  overflow: hidden;
 }
 .shot--a { background: linear-gradient(160deg, var(--surface-2), var(--ground-deep)); }
 .shot--b { background: linear-gradient(20deg, var(--surface-2), var(--ground-deep)); }
@@ -789,6 +802,14 @@ a { color: inherit; }
 .shot--f { background: linear-gradient(70deg, var(--surface-2), var(--ground-deep)); }
 
 /* ---------- visit ---------- */
+.shot img,
+.bio__portrait img {
+  grid-area: 1 / 1;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
 .visit { display: grid; gap: clamp(1.75rem, 5vw, 2.5rem); }
 .visit__col { display: grid; gap: 0.9rem; align-content: start; }
 
@@ -842,12 +863,16 @@ a { color: inherit; }
   place-items: center;
   border: 1px solid var(--line-soft);
   border-radius: var(--r-lg);
+  text-decoration: none;
+  transition: border-color 0.2s var(--ease);
   background:
     repeating-linear-gradient(90deg, transparent 0 47px, var(--line) 47px 48px),
     repeating-linear-gradient(0deg, transparent 0 47px, var(--line) 47px 48px),
     var(--surface-2);
   max-height: 22rem;
 }
+.map:hover { border-color: var(--accent); }
+.map:hover .ph-tag { color: var(--accent); }
 
 /* ---------- closer ---------- */
 /* The one place the red goes full-bleed. Everything above it stays quiet

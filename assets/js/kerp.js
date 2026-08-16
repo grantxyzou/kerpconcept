@@ -17,6 +17,18 @@
     burger.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
     drawer.hidden = !open;
     document.body.classList.toggle('is-locked', open);
+    // The body is scroll-locked while the drawer is open, but without inert a
+    // keyboard user could still Tab into the page behind it and land on
+    // controls they cannot see. Announce bar and masthead stay reachable. The
+    // skip link is included: it jumps to #main, which is inert right now, so
+    // in this state it is a control that visibly focuses and then does nothing.
+    Array.prototype.forEach.call(
+      document.querySelectorAll('main, footer, .dock, .skip'),
+      function (region) {
+        if (open) region.setAttribute('inert', '');
+        else region.removeAttribute('inert');
+      }
+    );
     if (open) {
       var first = drawer.querySelector('a');
       if (first) first.focus();
@@ -58,18 +70,52 @@
     });
   }
 
+  /* ------------------------------------------------------------ photos */
+  // Photos are committed by hand into assets/img/. Until a file is there the
+  // tile keeps its placeholder label rather than showing a broken-image icon,
+  // so the page is presentable at every stage of the handover.
+  Array.prototype.forEach.call(
+    document.querySelectorAll('.shot, .bio__portrait'),
+    function (tile) {
+      var img = tile.querySelector('img');
+      if (!img) return;
+      var label = tile.querySelector('.ph-tag');
+      var loaded = function () { if (label) label.remove(); };
+      var missing = function () { img.remove(); };
+
+      if (img.complete) {
+        // Already resolved before this ran, so check the decoded size.
+        if (img.naturalWidth > 0) loaded(); else missing();
+      } else {
+        img.addEventListener('load', loaded);
+        img.addEventListener('error', missing);
+      }
+    }
+  );
+
   /* --------------------------------------------------- scroll behaviour */
   var dock = document.querySelector('.dock');
   var lastY = window.scrollY;
+  var closerOnScreen = false;
 
   function onScroll() {
     var y = window.scrollY;
     masthead.classList.toggle('is-stuck', y > 8);
-    // Dock appears once the hero CTAs have scrolled away, hides again at the top.
-    dock.classList.toggle('is-up', y > 420);
+    // Dock appears once the hero CTAs have scrolled away, hides at the top and
+    // while the closing band is on screen — that band is the CTA down there,
+    // and stacking a second pair of red buttons on top of it reads as noise.
+    dock.classList.toggle('is-up', y > 420 && !closerOnScreen);
     lastY = y;
   }
   window.addEventListener('scroll', onScroll, { passive: true });
+
+  var closerEl = document.querySelector('.closer');
+  if (closerEl && 'IntersectionObserver' in window) {
+    new IntersectionObserver(function (entries) {
+      closerOnScreen = entries[0].isIntersecting;
+      onScroll();
+    }, { threshold: 0.1 }).observe(closerEl);
+  }
   onScroll();
 
   /* ---------------------------------------------------------- open/shut */
@@ -153,6 +199,18 @@
       document.getElementById(t.getAttribute('aria-controls')).hidden = !on;
     });
   }
+
+  // Service-card prices deep-link into the list with the right tab open. The
+  // default #prices navigation then handles the scroll.
+  Array.prototype.forEach.call(
+    document.querySelectorAll('.card__price[data-tab]'),
+    function (link) {
+      link.addEventListener('click', function () {
+        var tab = document.getElementById(link.dataset.tab);
+        if (tab) selectTab(tab);
+      });
+    }
+  );
 
   tabs.forEach(function (tab, i) {
     tab.addEventListener('click', function () { selectTab(tab); });
