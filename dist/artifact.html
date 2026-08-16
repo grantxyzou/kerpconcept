@@ -16,8 +16,8 @@
 
    --brand-paper       the light ground (default theme)
    --brand-ink         the dark ground (secondary theme)
-   --brand-red         the accent on paper — buttons, links, prices, the
-                       closing band. 7.7:1 on --brand-paper.
+   --brand-red         the accent on paper — buttons, links, prices. 7.7:1
+                       on --brand-paper.
    --brand-red-dark    hover state on paper
    --brand-red-lit     the same hue lifted to clear 4.5:1 on --brand-ink
    --brand-red-lit-hi  hover state on ink
@@ -33,6 +33,11 @@
   --brand-red-lit-hi:  #F87465;
   --brand-on-red:      #FFFFFF;
   --brand-on-red-dark: #1A0F11;
+  /* A full-bleed red surface, as opposed to red used as a small mark. Large
+     areas do not need the lift that keeps small marks legible on ink, so this
+     stays deep in both themes. */
+  --brand-red-band:    #A31C13;
+  --brand-on-red-band: #FFFFFF;
   /* The logo sets a black K inside the red disc. Logotypes are exempt from
      contrast minimums, and this is the mark as drawn. */
   --brand-logo-k:      #111111;
@@ -54,6 +59,8 @@
   --accent:      var(--brand-red);
   --accent-lit:  var(--brand-red-dark);
   --on-accent:   var(--brand-on-red);
+  --band:        var(--brand-red-band);
+  --on-band:     var(--brand-on-red-band);
   --open:        #1E7A45;
   --shut:        #8B7E7E;
 
@@ -160,12 +167,11 @@ a { color: inherit; }
   outline-offset: 3px;
 }
 
-/* Inside an accent-filled band the ring would be the same colour as the
-   background it sits on — present but invisible. Flip it to the on-accent
-   tone so it still reads. */
+/* Inside a filled band the ring would be the same colour as the background it
+   sits on — present but invisible. Flip it to the on-band tone so it reads. */
 .closer :focus-visible,
 .announce :focus-visible {
-  outline-color: var(--on-accent);
+  outline-color: var(--on-band);
 }
 
 .sr-only {
@@ -301,8 +307,8 @@ a { color: inherit; }
   padding: 0.7rem var(--pad);
   padding-right: 3.25rem;   /* clear of the close button */
   position: relative;
-  background: var(--accent);
-  color: var(--on-accent);
+  background: var(--band);
+  color: var(--on-band);
 }
 .announce[hidden] { display: none; }
 
@@ -317,7 +323,7 @@ a { color: inherit; }
   font-family: var(--font-display);
   font-size: var(--t-sm);
   font-weight: 700;
-  color: var(--on-accent);
+  color: var(--on-band);
   text-underline-offset: 3px;
   display: inline-flex;
   align-items: center;
@@ -336,11 +342,11 @@ a { color: inherit; }
   background: none;
   border: 0;
   border-radius: var(--r-md);
-  color: var(--on-accent);
+  color: var(--on-band);
   cursor: pointer;
   padding: 0;
 }
-.announce__close:hover { background: color-mix(in srgb, var(--on-accent) 16%, transparent); }
+.announce__close:hover { background: color-mix(in srgb, var(--on-band) 16%, transparent); }
 
 /* ---------- moved note in Visit ---------- */
 .moved {
@@ -850,24 +856,24 @@ a { color: inherit; }
    so this reads as the end of the page and the last chance to book. */
 .closer {
   padding-block: clamp(4rem, 11vw, 8rem);
-  background: var(--accent);
-  color: var(--on-accent);
+  background: var(--band);
+  color: var(--on-band);
   text-align: center;
 }
 .closer .btn--accent {
-  background: var(--on-accent);
-  color: var(--accent);
+  background: var(--on-band);
+  color: var(--band);
 }
 .closer .btn--accent:hover {
-  background: color-mix(in srgb, var(--on-accent) 86%, var(--accent));
+  background: color-mix(in srgb, var(--on-band) 86%, var(--band));
 }
 .closer .btn--ghost {
-  border-color: color-mix(in srgb, var(--on-accent) 45%, transparent);
-  color: var(--on-accent);
+  border-color: color-mix(in srgb, var(--on-band) 45%, transparent);
+  color: var(--on-band);
 }
 .closer .btn--ghost:hover {
-  border-color: var(--on-accent);
-  color: var(--on-accent);
+  border-color: var(--on-band);
+  color: var(--on-band);
 }
 .closer__title {
   font-family: var(--font-display);
@@ -877,9 +883,9 @@ a { color: inherit; }
   line-height: 0.95;
 }
 .closer__sub {
-  /* Full strength: softening this to 82% dropped it to 4.05:1 on the lifted
-     red of the dark theme. Size and weight carry the hierarchy instead. */
-  color: var(--on-accent);
+  /* Full strength: softening this to 82% dropped it below 4.5:1. Size and
+     weight carry the hierarchy instead. */
+  color: var(--on-band);
   max-width: 34ch;
   margin: 1rem auto clamp(1.5rem, 4vw, 2rem);
 }
@@ -1072,7 +1078,7 @@ a { color: inherit; }
     </nav>
 
     <div class="masthead__actions">
-      <a class="btn btn--accent btn--sm hide-sm" href="https://www.fresha.com/lvp/kerp-salon-barbershop-and-hair-salon-mens-and-womens-services-downtown-vancouver-NoJKM7" target="_blank" rel="noopener">Book</a>
+      <a class="btn btn--accent btn--sm hide-sm" href="https://kerpbarber.salonmonster.com/10/client/#/bookings" target="_blank" rel="noopener">Book</a>
       <button class="burger" id="burger" type="button" aria-expanded="false" aria-controls="drawer" aria-label="Open menu">
         <span class="burger__box"><span class="burger__bar"></span></span>
       </button>
@@ -1089,7 +1095,7 @@ a { color: inherit; }
     <a href="#visit"><span class="drawer__label">Visit</span><span class="drawer__meta">Hours &amp; directions</span></a>
   </nav>
   <div class="drawer__foot">
-    <a class="btn btn--accent btn--block" href="https://www.fresha.com/lvp/kerp-salon-barbershop-and-hair-salon-mens-and-womens-services-downtown-vancouver-NoJKM7" target="_blank" rel="noopener">Book online</a>
+    <a class="btn btn--accent btn--block" href="https://kerpbarber.salonmonster.com/10/client/#/bookings" target="_blank" rel="noopener">Book online</a>
     <a class="btn btn--ghost btn--block" href="tel:+16046850649">Call (604) 685-0649</a>
   </div>
 </div>
@@ -1112,7 +1118,7 @@ a { color: inherit; }
       </p>
 
       <div class="hero__cta reveal" data-d="3">
-        <a class="btn btn--accent" href="https://www.fresha.com/lvp/kerp-salon-barbershop-and-hair-salon-mens-and-womens-services-downtown-vancouver-NoJKM7" target="_blank" rel="noopener">Book online</a>
+        <a class="btn btn--accent" href="https://kerpbarber.salonmonster.com/10/client/#/bookings" target="_blank" rel="noopener">Book online</a>
         <a class="btn btn--ghost" href="tel:+16046850649">Call the shop</a>
       </div>
 
@@ -1345,7 +1351,7 @@ a { color: inherit; }
             <ul class="contact">
               <li><a href="tel:+16046850649"><span class="contact__k">Phone</span><span class="contact__v">(604) 685-0649</span></a></li>
               <li><a href="mailto:info@kerp.ca"><span class="contact__k">Email</span><span class="contact__v">info@kerp.ca</span></a></li>
-              <li><a href="https://www.fresha.com/lvp/kerp-salon-barbershop-and-hair-salon-mens-and-womens-services-downtown-vancouver-NoJKM7" target="_blank" rel="noopener"><span class="contact__k">Booking</span><span class="contact__v">Fresha</span></a></li>
+              <li><a href="https://kerpbarber.salonmonster.com/10/client/#/bookings" target="_blank" rel="noopener"><span class="contact__k">Booking</span><span class="contact__v">Book a time</span></a></li>
             </ul>
           </div>
         </div>
@@ -1363,7 +1369,7 @@ a { color: inherit; }
       <h2 class="closer__title reveal">Chair’s free.</h2>
       <p class="closer__sub reveal">We’re appointments only. Book online whenever, or give us a call when we’re open.</p>
       <div class="hero__cta reveal">
-        <a class="btn btn--accent" href="https://www.fresha.com/lvp/kerp-salon-barbershop-and-hair-salon-mens-and-womens-services-downtown-vancouver-NoJKM7" target="_blank" rel="noopener">Book online</a>
+        <a class="btn btn--accent" href="https://kerpbarber.salonmonster.com/10/client/#/bookings" target="_blank" rel="noopener">Book online</a>
         <a class="btn btn--ghost" href="tel:+16046850649">(604) 685-0649</a>
       </div>
     </div>
@@ -1387,7 +1393,7 @@ a { color: inherit; }
 
 <div class="dock" aria-label="Quick actions">
   <a class="dock__btn dock__btn--call" href="tel:+16046850649">Call</a>
-  <a class="dock__btn dock__btn--book" href="https://www.fresha.com/lvp/kerp-salon-barbershop-and-hair-salon-mens-and-womens-services-downtown-vancouver-NoJKM7" target="_blank" rel="noopener">Book online</a>
+  <a class="dock__btn dock__btn--book" href="https://kerpbarber.salonmonster.com/10/client/#/bookings" target="_blank" rel="noopener">Book online</a>
 </div>
 <script>
 /* ==========================================================================
