@@ -75,6 +75,12 @@
   --pad:  clamp(1.25rem, 5vw, 2.5rem);
   --shell: 74rem;
 
+  /* Corner radii. A border that draws a box gets one of these; a border used
+     as a rule between stacked rows stays square. */
+  --r-sm: 0.5rem;    /* chips */
+  --r-md: 0.625rem;  /* buttons and button-like controls */
+  --r-lg: 1rem;      /* cards, media, panels */
+
   --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
   color-scheme: light;
 }
@@ -147,10 +153,11 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 
 a { color: inherit; }
 
+/* No radius here on purpose: the outline follows each element's own
+   border-radius, so forcing one would square off the rounded controls. */
 :focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 3px;
-  border-radius: 2px;
 }
 
 .sr-only {
@@ -166,6 +173,7 @@ a { color: inherit; }
   display: inline-flex; align-items: center;
   min-height: 2.75rem;
   background: var(--accent); color: var(--on-accent);
+  border-radius: var(--r-md);
   padding: 0 1.2rem;
   font-family: var(--font-display);
   font-size: var(--t-sm); font-weight: 700;
@@ -258,6 +266,7 @@ a { color: inherit; }
   letter-spacing: 0.02em;
   text-decoration: none;
   border: 1px solid transparent;
+  border-radius: var(--r-md);
   cursor: pointer;
   transition: background-color 0.2s var(--ease), color 0.2s var(--ease), border-color 0.2s var(--ease);
 }
@@ -345,11 +354,13 @@ a { color: inherit; }
   gap: 0.75rem;
 }
 
+/* No border by request. The 2.75rem box stays: it is the 44px tap target. */
 .burger {
   width: 2.75rem; height: 2.75rem;
   display: grid; place-items: center;
   background: none;
-  border: 1px solid var(--line);
+  border: 0;
+  border-radius: var(--r-md);
   color: inherit;
   cursor: pointer;
   padding: 0;
@@ -540,6 +551,8 @@ a { color: inherit; }
   gap: 1px;
   background: var(--line-soft);
   border: 1px solid var(--line-soft);
+  border-radius: var(--r-lg);
+  overflow: hidden;
 }
 .card {
   background: var(--ground);
@@ -626,6 +639,7 @@ a { color: inherit; }
   background:
     linear-gradient(148deg, var(--surface-2) 0%, var(--surface) 55%, var(--ground-deep) 100%);
   border: 1px solid var(--line-soft);
+  border-radius: var(--r-lg);
   max-height: 22rem;
 }
 .section--alt .bio__portrait { background: linear-gradient(148deg, var(--ground) 0%, var(--surface-2) 100%); }
@@ -653,6 +667,7 @@ a { color: inherit; }
   text-transform: uppercase;
   color: var(--text-dim);
   border: 1px solid var(--line);
+  border-radius: var(--r-sm);
   padding: 0.5rem 0.7rem;
 }
 
@@ -675,6 +690,7 @@ a { color: inherit; }
   display: grid;
   place-items: center;
   border: 1px solid var(--line-soft);
+  border-radius: var(--r-lg);
 }
 .shot--a { background: linear-gradient(160deg, var(--surface-2), var(--ground-deep)); }
 .shot--b { background: linear-gradient(20deg, var(--surface-2), var(--ground-deep)); }
@@ -736,6 +752,7 @@ a { color: inherit; }
   display: grid;
   place-items: center;
   border: 1px solid var(--line-soft);
+  border-radius: var(--r-lg);
   background:
     repeating-linear-gradient(90deg, transparent 0 47px, var(--line) 47px 48px),
     repeating-linear-gradient(0deg, transparent 0 47px, var(--line) 47px 48px),
@@ -833,6 +850,7 @@ a { color: inherit; }
   text-decoration: none;
 }
 .dock__btn--call { border: 1px solid var(--line); color: var(--text); }
+.dock__btn { border-radius: var(--r-md); }
 .dock__btn--book { background: var(--accent); color: var(--on-accent); }
 
 /* ---------- reveal animation ---------- */
@@ -981,8 +999,8 @@ a { color: inherit; }
       </h1>
 
       <p class="hero__lede reveal" data-d="2">
-        Ricardo cuts classic and modern at Kerp — a two&#8209;chair shop on West Pender where
-        every haircut ends with a wash, a proper style, and a mirror check you actually agree with.
+        Ricardo has been cutting hair for twenty-five years. Every cut comes with a wash
+        and a style, and we take the time to get it right.
       </p>
 
       <div class="hero__cta reveal" data-d="3">
@@ -1023,31 +1041,30 @@ a { color: inherit; }
         <p class="rail-label">Services</p>
       </div>
       <div class="split__body">
-        <h2 class="h2 reveal">Four things, done properly.</h2>
+        <h2 class="h2 reveal">What we do.</h2>
         <p class="lede reveal">
-          Kerp is a barbershop and a salon in the same room. Men’s and women’s services,
-          the same standard either side of the chair.
+          We’re a barbershop and a salon in the same room. Men’s and women’s services both.
         </p>
 
         <ul class="cards reveal">
           <li class="card">
             <h3 class="card__title">Cuts &amp; fades</h3>
-            <p class="card__body">Skin fades, tapers, scissor work and grown-out shapes that still look deliberate at week six.</p>
+            <p class="card__body">Skin fades, tapers, scissor cuts, and tidying up something that’s grown out.</p>
             <p class="card__price">from $55</p>
           </li>
           <li class="card">
             <h3 class="card__title">Beard &amp; shave</h3>
-            <p class="card__body">Hot towel, straight razor, and a beard line that follows your jaw rather than fighting it.</p>
+            <p class="card__body">Hot towel and a straight razor. Beard trims and shape-ups too.</p>
             <p class="card__price">from $40</p>
           </li>
           <li class="card">
             <h3 class="card__title">Colour</h3>
-            <p class="card__body">Root touch-ups, full-head highlights, grey blending and correction work. Consultation first, always.</p>
+            <p class="card__body">Root touch-ups, highlights, grey blending, and fixing colour that didn’t go to plan. We’ll talk it through first.</p>
             <p class="card__price">from $70</p>
           </li>
           <li class="card">
             <h3 class="card__title">Perms &amp; smoothing</h3>
-            <p class="card__body">Cold perm, iron perm and straightening — booked with a patch test and a realistic timeline.</p>
+            <p class="card__body">Cold perm, iron perm, and straightening. These take a while, so book ahead.</p>
             <p class="card__price">from $130</p>
           </li>
         </ul>
@@ -1062,7 +1079,7 @@ a { color: inherit; }
         <p class="rail-label">Prices</p>
       </div>
       <div class="split__body">
-        <h2 class="h2 reveal">The whole list, no asterisks.</h2>
+        <h2 class="h2 reveal">What it costs.</h2>
 
         <div class="tabs reveal">
           <div class="tabs__list" role="tablist" aria-label="Price list">
@@ -1103,8 +1120,8 @@ a { color: inherit; }
         </div>
 
         <p class="note reveal">
-          Longer, denser or more damaged hair takes more time and more product, so colour and
-          chemical services are quoted from. You’ll hear the number before anything starts.
+          Colour and chemical work is priced from, because longer or thicker hair takes more
+          time and more product. We’ll tell you the price before we start.
         </p>
       </div>
     </div>
@@ -1124,20 +1141,19 @@ a { color: inherit; }
           <div class="bio__text">
             <h2 class="h2">Ricardo</h2>
             <p>
-              A Spanish barber who picked up his first pair of shears twenty-five years ago and
-              never really put them down. Kerp was an idea he carried for years before it became
-              a room on West Pender.
+              Ricardo trained as a barber in Spain and has been at it for twenty-five years.
+              Kerp was an idea he sat on for a long time before it became a room on West Pender.
             </p>
             <p>
-              He also teaches — private master classes and advanced workshops for barbers who want
-              their fades to stop being an argument with the clipper.
+              He also teaches. Private classes and workshops for barbers who want to sharpen
+              up their fades.
             </p>
             <a class="link-arrow" href="#visit">Book a master class<span aria-hidden="true">→</span></a>
           </div>
         </div>
 
         <div class="themes reveal">
-          <p class="themes__head">What clients mention most <span class="themes__src">— across 124 public reviews</span></p>
+          <p class="themes__head">What people mention most, <span class="themes__src">based on 124 reviews</span></p>
           <ul class="chips">
             <li>Precise fades</li>
             <li>Sharp lines</li>
@@ -1159,7 +1175,7 @@ a { color: inherit; }
       </div>
       <div class="split__body">
         <h2 class="h2 reveal">Recent cuts.</h2>
-        <p class="lede reveal">A normal week in the chair. Shop photography drops straight into this grid — the tiles below are placeholders for the proof of concept.</p>
+        <p class="lede reveal">A normal week’s work. Real photos go here; these are placeholders for now.</p>
         <ul class="gallery reveal" tabindex="0" aria-label="Recent cuts, scrollable">
           <li class="shot shot--a"><span class="ph-tag">Skin fade</span></li>
           <li class="shot shot--b"><span class="ph-tag">Scissor crop</span></li>
@@ -1224,7 +1240,7 @@ a { color: inherit; }
   <section class="closer">
     <div class="shell">
       <h2 class="closer__title reveal">Chair’s free.</h2>
-      <p class="closer__sub reveal">Appointments only, so grab a slot — online any time, or call during shop hours.</p>
+      <p class="closer__sub reveal">We’re appointments only. Book online whenever, or give us a call when we’re open.</p>
       <div class="hero__cta reveal">
         <a class="btn btn--accent" href="https://www.fresha.com/lvp/kerp-salon-barbershop-and-hair-salon-mens-and-womens-services-downtown-vancouver-NoJKM7" target="_blank" rel="noopener">Book online</a>
         <a class="btn btn--ghost" href="tel:+16046850649">(604) 685-0649</a>
@@ -1244,7 +1260,7 @@ a { color: inherit; }
       <span class="foot__descriptor">Barbershop &amp; Salon</span>
     </p>
     <p class="foot__meta">524 W Pender St, Vancouver BC · info@kerp.ca · (604) 685-0649</p>
-    <p class="foot__poc">Design proof of concept — not the live kerp.ca.</p>
+    <p class="foot__poc">Design concept only. Not the real kerp.ca.</p>
   </div>
 </footer>
 
