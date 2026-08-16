@@ -115,34 +115,91 @@ const TARGET_MIN = 44;
     // focus came from the keyboard, so a programmatic el.focus() would report
     // every element as unstyled.
     const noFocusRing = [];
-    const seen = new Set();
+    const dimFocusRing = [];
     await page.evaluate(() => document.body.focus());
-    for (let i = 0; i < 60; i++) {
+    for (let i = 0; i < 120; i++) {
       await page.keyboard.press('Tab');
       const info = await page.evaluate(() => {
         const el = document.activeElement;
         if (!el || el === document.body) return null;
+        // Track the element itself, not its label. Two different buttons can
+        // both say "Book online", and de-duplicating by text made the walk stop
+        // at the second one — before ever reaching the closing band.
+        if (el.dataset.a11ySeen) return { wrapped: true };
+        el.dataset.a11ySeen = '1';
         const s = getComputedStyle(el);
+
+        // Resolve any CSS colour through a canvas rather than by regex. Chrome
+        // computes color-mix() to `color(srgb 0.97 0.96 0.96 / 0.88)` — 0-1
+        // floats, not 0-255 — so string parsing silently reads near-white as
+        // near-black. Reading a painted pixel back handles every syntax.
+        const cv = document.createElement('canvas');
+        cv.width = cv.height = 1;
+        const cx = cv.getContext('2d', { willReadFrequently: true });
+        const parse = (c) => {
+          if (!c) return null;
+          cx.clearRect(0, 0, 1, 1);
+          cx.fillStyle = 'rgba(0,0,0,0)';
+          cx.fillStyle = c;
+          cx.fillRect(0, 0, 1, 1);
+          const d = cx.getImageData(0, 0, 1, 1).data;
+          return d[3] === 0 ? null : [d[0], d[1], d[2]];
+        };
+        const lum = ([r, g, b]) => {
+          const f = (v) => {
+            v /= 255;
+            return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
+          };
+          return 0.2126 * f(r) + 0.7152 * f(g) + 0.0722 * f(b);
+        };
+        const ratio = (a, b) => {
+          const [x, y] = [lum(a), lum(b)].sort((p, q) => q - p);
+          return (x + 0.05) / (y + 0.05);
+        };
+
+        // outline-offset is positive, so the ring is drawn outside the element's
+        // own box — it sits on whatever ancestor paints the background behind it.
+        let bg = null;
+        for (let n = el.parentElement; n && !bg; n = n.parentElement) {
+          bg = parse(getComputedStyle(n).backgroundColor);
+        }
+        const ring = parse(s.outlineColor);
+
         return {
           key: (el.className || '').toString().split(' ')[0] + '|' +
                (el.textContent || '').trim().slice(0, 20),
           outline: s.outlineStyle !== 'none' && parseFloat(s.outlineWidth) > 0,
           shadow: s.boxShadow !== 'none',
-          border: s.borderColor
+          contrast: ring && bg ? ratio(ring, bg) : null,
+          ringColor: s.outlineColor
         };
       });
-      if (!info) break;
-      if (seen.has(info.key)) break; // wrapped around
-      seen.add(info.key);
-      if (!info.outline && !info.shadow) noFocusRing.push(info.key.replace('|', ' — '));
+      if (!info || info.wrapped) break;
+      const label = info.key.replace('|', ' / ');
+      if (!info.outline && !info.shadow) {
+        noFocusRing.push(label);
+      } else if (info.outline && info.contrast !== null && info.contrast < 3) {
+        // WCAG 2.4.11 wants the focus indicator to stand out from its backdrop.
+        // A red ring on a red band passes a presence check and is still invisible.
+        dimFocusRing.push(`${label} (${info.contrast.toFixed(2)}:1, ${info.ringColor})`);
+      }
     }
 
-    if (noFocusRing.length === 0) {
-      console.log(`        ${label} focus: visible on every focusable element`);
+    await page.evaluate(() =>
+      document.querySelectorAll('[data-a11y-seen]').forEach((n) => delete n.dataset.a11ySeen));
+
+    if (noFocusRing.length === 0 && dimFocusRing.length === 0) {
+      console.log(`        ${label} focus: visible and >= 3:1 on every focusable element`);
     } else {
-      violations += noFocusRing.length;
-      console.log(`  FAIL  ${label} focus: ${noFocusRing.length} without a visible indicator`);
-      noFocusRing.forEach((f) => console.log(`          ${f}`));
+      violations += noFocusRing.length + dimFocusRing.length;
+      if (noFocusRing.length) {
+        console.log(`  FAIL  ${label} focus: ${noFocusRing.length} without a visible indicator`);
+        noFocusRing.forEach((f) => console.log(`          ${f}`));
+      }
+      if (dimFocusRing.length) {
+        console.log(`  FAIL  ${label} focus: ${dimFocusRing.length} ring(s) under 3:1 against the backdrop`);
+        dimFocusRing.forEach((f) => console.log(`          ${f}`));
+      }
     }
 
     await ctx.close();

@@ -160,6 +160,14 @@ a { color: inherit; }
   outline-offset: 3px;
 }
 
+/* Inside an accent-filled band the ring would be the same colour as the
+   background it sits on — present but invisible. Flip it to the on-accent
+   tone so it still reads. */
+.closer :focus-visible,
+.announce :focus-visible {
+  outline-color: var(--on-accent);
+}
+
 .sr-only {
   position: absolute; width: 1px; height: 1px;
   padding: 0; margin: -1px; overflow: hidden;
@@ -279,6 +287,81 @@ a { color: inherit; }
 
 .btn--sm { min-height: 2.75rem; padding: 0 1.1rem; }
 .btn--block { width: 100%; }
+
+/* ---------- moving announcement ----------
+   A bar, not a modal: it never covers the page, never traps focus, and can be
+   dismissed for good. The address also lives in the hero eyebrow and the Visit
+   section, so nothing is lost once this is gone.
+   Remove this block with the markup in index.html when the move is old news. */
+.announce {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem 1rem;
+  padding: 0.7rem var(--pad);
+  padding-right: 3.25rem;   /* clear of the close button */
+  position: relative;
+  background: var(--accent);
+  color: var(--on-accent);
+}
+.announce[hidden] { display: none; }
+
+.announce__text {
+  font-size: var(--t-sm);
+  line-height: 1.45;
+  max-width: 62ch;
+}
+.announce__text strong { font-family: var(--font-display); font-weight: 700; }
+
+.announce__link {
+  font-family: var(--font-display);
+  font-size: var(--t-sm);
+  font-weight: 700;
+  color: var(--on-accent);
+  text-underline-offset: 3px;
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+}
+
+.announce__close {
+  position: absolute;
+  top: 50%;
+  right: max(0.35rem, calc(var(--pad) - 1.4rem));
+  transform: translateY(-50%);
+  width: 2.75rem;
+  height: 2.75rem;
+  display: grid;
+  place-items: center;
+  background: none;
+  border: 0;
+  border-radius: var(--r-md);
+  color: var(--on-accent);
+  cursor: pointer;
+  padding: 0;
+}
+.announce__close:hover { background: color-mix(in srgb, var(--on-accent) 16%, transparent); }
+
+/* ---------- moved note in Visit ---------- */
+.moved {
+  display: grid;
+  gap: 0.4rem;
+  justify-items: start;
+  font-size: var(--t-sm);
+  line-height: 1.55;
+  color: var(--text-dim);
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  padding: 0.9rem 1rem;
+  max-width: 34ch;
+}
+.moved__tag {
+  font-family: var(--font-mono);
+  font-size: var(--t-micro);
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
 
 /* ---------- masthead ---------- */
 .masthead {
@@ -946,6 +1029,29 @@ a { color: inherit; }
 </style>
 <a class="skip" href="#main">Skip to content</a>
 
+<!-- ── Moving announcement. Delete this block, the .announce CSS and the
+     announce init in kerp.js once the move is old news. ────────────────── -->
+<aside class="announce" id="announce">
+  <p class="announce__text">
+    <strong>We&rsquo;ve moved.</strong>
+    Find us at 1140 West Pender St, inside Sebastian1 Salon.
+  </p>
+  <a class="announce__link" href="#visit">Get directions</a>
+  <button class="announce__close" id="announceClose" type="button" aria-label="Dismiss the moving notice">
+    <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false">
+      <path d="M2 2 L14 14 M14 2 L2 14" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/>
+    </svg>
+  </button>
+</aside>
+<script>
+  /* Applied before paint so a returning visitor never sees the bar flash. */
+  try {
+    if (localStorage.getItem('kerp-moved-dismissed') === '1') {
+      document.getElementById('announce').hidden = true;
+    }
+  } catch (e) { /* storage blocked; showing the bar is the safe default */ }
+</script>
+
 <header class="masthead" id="masthead">
   <div class="masthead__inner shell">
     <a class="wordmark" href="#top" aria-label="Kerp Barbershop and Salon, home">
@@ -992,7 +1098,7 @@ a { color: inherit; }
   <section class="hero" id="top">
     <canvas class="hero__canvas" id="heroCanvas" aria-hidden="true"></canvas>
     <div class="hero__inner shell">
-      <p class="eyebrow reveal" data-d="0">524 W Pender St · Downtown Vancouver</p>
+      <p class="eyebrow reveal" data-d="0">1140 W Pender St · Downtown Vancouver</p>
 
       <h1 class="hero__title reveal" data-d="1">
         Twenty&#8209;five years<br>behind the chair.
@@ -1195,7 +1301,7 @@ a { color: inherit; }
         <p class="rail-label">Visit</p>
       </div>
       <div class="split__body">
-        <h2 class="h2 reveal">524 W Pender St.</h2>
+        <h2 class="h2 reveal">1140 W Pender St.</h2>
 
         <div class="visit reveal">
           <div class="visit__col">
@@ -1216,11 +1322,17 @@ a { color: inherit; }
 
           <div class="visit__col">
             <h3 class="h3">Getting here</h3>
+            <p class="moved">
+              <span class="moved__tag">New location</span>
+              If you&rsquo;re looking for the old 524 W Pender address, this is the same shop.
+              We moved up the street.
+            </p>
             <address class="addr">
-              524 W Pender St<br>
-              Vancouver, BC&nbsp;&nbsp;V6B 1V3
+              1140 West Pender St<br>
+              Inside Sebastian1 Salon<br>
+              Vancouver, BC
             </address>
-            <p class="note note--tight">Two blocks from Granville Station. Street parking on Richards after 18:00.</p>
+            <p class="note note--tight">Next to the Sun Life Building. We share a room with Sebastian1 Salon, so come in their front door and ask for Ricardo.</p>
             <ul class="contact">
               <li><a href="tel:+16046850649"><span class="contact__k">Phone</span><span class="contact__v">(604) 685-0649</span></a></li>
               <li><a href="mailto:info@kerp.ca"><span class="contact__k">Email</span><span class="contact__v">info@kerp.ca</span></a></li>
@@ -1229,7 +1341,7 @@ a { color: inherit; }
           </div>
         </div>
 
-        <div class="map reveal" role="img" aria-label="Map of 524 West Pender Street, placeholder">
+        <div class="map reveal" role="img" aria-label="Map of 1140 West Pender Street, placeholder">
           <span class="ph-tag">Map embed</span>
         </div>
       </div>
@@ -1259,7 +1371,7 @@ a { color: inherit; }
       <span class="sr-only">Kerp</span>
       <span class="foot__descriptor">Barbershop &amp; Salon</span>
     </p>
-    <p class="foot__meta">524 W Pender St, Vancouver BC · info@kerp.ca · (604) 685-0649</p>
+    <p class="foot__meta">1140 W Pender St, Vancouver BC · info@kerp.ca · (604) 685-0649</p>
     <p class="foot__poc">Design concept only. Not the real kerp.ca.</p>
   </div>
 </footer>
@@ -1313,6 +1425,21 @@ a { color: inherit; }
   window.matchMedia('(min-width: 60rem)').addEventListener('change', function (e) {
     if (e.matches) setDrawer(false);
   });
+
+  /* ------------------------------------------------ moving announcement */
+  // Remove this block along with the .announce markup and CSS once the move
+  // is old news. Dismissal sticks so returning clients are not nagged.
+  var announce = document.getElementById('announce');
+  var announceClose = document.getElementById('announceClose');
+
+  if (announce && announceClose) {
+    announceClose.addEventListener('click', function () {
+      announce.hidden = true;
+      try {
+        localStorage.setItem('kerp-moved-dismissed', '1');
+      } catch (err) { /* storage blocked; it will simply show again next visit */ }
+    });
+  }
 
   /* --------------------------------------------------- scroll behaviour */
   var dock = document.querySelector('.dock');
