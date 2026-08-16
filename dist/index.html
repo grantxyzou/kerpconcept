@@ -268,6 +268,9 @@ a { color: inherit; }
 .link-arrow:hover span { transform: translateX(4px); }
 
 .ph-tag {
+  grid-area: 1 / 1;
+  align-self: center;
+  justify-self: center;
   font-family: var(--font-mono);
   font-size: var(--t-micro);
   letter-spacing: 0.12em;
@@ -735,6 +738,7 @@ a { color: inherit; }
   aspect-ratio: 4 / 5;
   display: grid;
   place-items: center;
+  overflow: hidden;
   background:
     linear-gradient(148deg, var(--surface-2) 0%, var(--surface) 55%, var(--ground-deep) 100%);
   border: 1px solid var(--line-soft);
@@ -790,6 +794,7 @@ a { color: inherit; }
   place-items: center;
   border: 1px solid var(--line-soft);
   border-radius: var(--r-lg);
+  overflow: hidden;
 }
 .shot--a { background: linear-gradient(160deg, var(--surface-2), var(--ground-deep)); }
 .shot--b { background: linear-gradient(20deg, var(--surface-2), var(--ground-deep)); }
@@ -799,6 +804,14 @@ a { color: inherit; }
 .shot--f { background: linear-gradient(70deg, var(--surface-2), var(--ground-deep)); }
 
 /* ---------- visit ---------- */
+.shot img,
+.bio__portrait img {
+  grid-area: 1 / 1;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
 .visit { display: grid; gap: clamp(1.75rem, 5vw, 2.5rem); }
 .visit__col { display: grid; gap: 0.9rem; align-content: start; }
 
@@ -1260,7 +1273,7 @@ a { color: inherit; }
       </div>
       <div class="split__body">
         <div class="bio reveal">
-          <div class="bio__portrait" role="img" aria-label="Inside the shop, placeholder image">
+          <div class="bio__portrait">
             <span class="ph-tag">Shop interior</span>
           </div>
           <div class="bio__text">
@@ -1466,6 +1479,29 @@ a { color: inherit; }
       } catch (err) { /* storage blocked; it will simply show again next visit */ }
     });
   }
+
+  /* ------------------------------------------------------------ photos */
+  // Photos are committed by hand into assets/img/. Until a file is there the
+  // tile keeps its placeholder label rather than showing a broken-image icon,
+  // so the page is presentable at every stage of the handover.
+  Array.prototype.forEach.call(
+    document.querySelectorAll('.shot, .bio__portrait'),
+    function (tile) {
+      var img = tile.querySelector('img');
+      if (!img) return;
+      var label = tile.querySelector('.ph-tag');
+      var loaded = function () { if (label) label.remove(); };
+      var missing = function () { img.remove(); };
+
+      if (img.complete) {
+        // Already resolved before this ran, so check the decoded size.
+        if (img.naturalWidth > 0) loaded(); else missing();
+      } else {
+        img.addEventListener('load', loaded);
+        img.addEventListener('error', missing);
+      }
+    }
+  );
 
   /* --------------------------------------------------- scroll behaviour */
   var dock = document.querySelector('.dock');

@@ -58,6 +58,29 @@
     });
   }
 
+  /* ------------------------------------------------------------ photos */
+  // Photos are committed by hand into assets/img/. Until a file is there the
+  // tile keeps its placeholder label rather than showing a broken-image icon,
+  // so the page is presentable at every stage of the handover.
+  Array.prototype.forEach.call(
+    document.querySelectorAll('.shot, .bio__portrait'),
+    function (tile) {
+      var img = tile.querySelector('img');
+      if (!img) return;
+      var label = tile.querySelector('.ph-tag');
+      var loaded = function () { if (label) label.remove(); };
+      var missing = function () { img.remove(); };
+
+      if (img.complete) {
+        // Already resolved before this ran, so check the decoded size.
+        if (img.naturalWidth > 0) loaded(); else missing();
+      } else {
+        img.addEventListener('load', loaded);
+        img.addEventListener('error', missing);
+      }
+    }
+  );
+
   /* --------------------------------------------------- scroll behaviour */
   var dock = document.querySelector('.dock');
   var lastY = window.scrollY;
