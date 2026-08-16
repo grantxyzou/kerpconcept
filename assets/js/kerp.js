@@ -43,6 +43,21 @@
     if (e.matches) setDrawer(false);
   });
 
+  /* ------------------------------------------------ moving announcement */
+  // Remove this block along with the .announce markup and CSS once the move
+  // is old news. Dismissal sticks so returning clients are not nagged.
+  var announce = document.getElementById('announce');
+  var announceClose = document.getElementById('announceClose');
+
+  if (announce && announceClose) {
+    announceClose.addEventListener('click', function () {
+      announce.hidden = true;
+      try {
+        localStorage.setItem('kerp-moved-dismissed', '1');
+      } catch (err) { /* storage blocked; it will simply show again next visit */ }
+    });
+  }
+
   /* --------------------------------------------------- scroll behaviour */
   var dock = document.querySelector('.dock');
   var lastY = window.scrollY;

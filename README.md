@@ -1,7 +1,7 @@
 # kerp.ca — redesign proof of concept
 
 A mobile-first redesign of [kerp.ca](https://kerp.ca), the site for **Kerp Barbershop &
-Salon** at 524 W Pender St in downtown Vancouver. Single page, no framework, no build
+Salon** at 1140 W Pender St in downtown Vancouver. Single page, no framework, no build
 dependencies — open `index.html` and it runs.
 
 This is a design POC, not the live site.
@@ -13,6 +13,21 @@ This is a design POC, not the live site.
 ```sh
 python3 -m http.server 8000    # then open http://localhost:8000
 ```
+
+## The moving notice
+
+The shop moved to 1140 W Pender St (inside Sebastian1 Salon), so the page carries a
+`.announce` bar above the masthead. It is deliberately **not** a modal: it never covers the
+page, never takes focus, and dismissal is remembered in `localStorage` so returning clients
+are not nagged. An inline script right after the markup applies a stored dismissal before
+paint, so the bar never flashes.
+
+The address does not depend on the bar. It is also in the hero eyebrow, the Visit section and
+the footer, plus a short note in Visit for people searching the old 524 W Pender address.
+
+To retire the notice, delete three labelled blocks: the `<aside class="announce">` markup and
+its inline script in `index.html`, the `.announce` rules in `kerp.css`, and the announcement
+init in `kerp.js`.
 
 ## Hosting
 

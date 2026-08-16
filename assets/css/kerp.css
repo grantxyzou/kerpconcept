@@ -66,7 +66,7 @@
   --t-lede:  clamp(1.0625rem, 1rem + 0.4vw, 1.25rem);
   --t-h3:    clamp(1.0625rem, 1rem + 0.35vw, 1.1875rem);
   --t-h2:    clamp(1.75rem, 1.35rem + 2vw, 2.75rem);
-  --t-h1:    clamp(2.75rem, 1.6rem + 8.4vw, 6.5rem);
+  --t-h1:    clamp(2.125rem, 1.25rem + 4.4vw, 4rem);
 
   --gap:  clamp(1.25rem, 4vw, 2rem);
   --bay:  clamp(3.5rem, 9vw, 7rem);
@@ -156,6 +156,14 @@ a { color: inherit; }
 :focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 3px;
+}
+
+/* Inside an accent-filled band the ring would be the same colour as the
+   background it sits on — present but invisible. Flip it to the on-accent
+   tone so it still reads. */
+.closer :focus-visible,
+.announce :focus-visible {
+  outline-color: var(--on-accent);
 }
 
 .sr-only {
@@ -277,6 +285,81 @@ a { color: inherit; }
 
 .btn--sm { min-height: 2.75rem; padding: 0 1.1rem; }
 .btn--block { width: 100%; }
+
+/* ---------- moving announcement ----------
+   A bar, not a modal: it never covers the page, never traps focus, and can be
+   dismissed for good. The address also lives in the hero eyebrow and the Visit
+   section, so nothing is lost once this is gone.
+   Remove this block with the markup in index.html when the move is old news. */
+.announce {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem 1rem;
+  padding: 0.7rem var(--pad);
+  padding-right: 3.25rem;   /* clear of the close button */
+  position: relative;
+  background: var(--accent);
+  color: var(--on-accent);
+}
+.announce[hidden] { display: none; }
+
+.announce__text {
+  font-size: var(--t-sm);
+  line-height: 1.45;
+  max-width: 62ch;
+}
+.announce__text strong { font-family: var(--font-display); font-weight: 700; }
+
+.announce__link {
+  font-family: var(--font-display);
+  font-size: var(--t-sm);
+  font-weight: 700;
+  color: var(--on-accent);
+  text-underline-offset: 3px;
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+}
+
+.announce__close {
+  position: absolute;
+  top: 50%;
+  right: max(0.35rem, calc(var(--pad) - 1.4rem));
+  transform: translateY(-50%);
+  width: 2.75rem;
+  height: 2.75rem;
+  display: grid;
+  place-items: center;
+  background: none;
+  border: 0;
+  border-radius: var(--r-md);
+  color: var(--on-accent);
+  cursor: pointer;
+  padding: 0;
+}
+.announce__close:hover { background: color-mix(in srgb, var(--on-accent) 16%, transparent); }
+
+/* ---------- moved note in Visit ---------- */
+.moved {
+  display: grid;
+  gap: 0.4rem;
+  justify-items: start;
+  font-size: var(--t-sm);
+  line-height: 1.55;
+  color: var(--text-dim);
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  padding: 0.9rem 1rem;
+  max-width: 34ch;
+}
+.moved__tag {
+  font-family: var(--font-mono);
+  font-size: var(--t-micro);
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
 
 /* ---------- masthead ---------- */
 .masthead {
@@ -449,9 +532,11 @@ a { color: inherit; }
   font-family: var(--font-display);
   font-size: var(--t-h1);
   font-weight: 800;
-  letter-spacing: -0.045em;
-  line-height: 0.93;
+  letter-spacing: -0.04em;
+  line-height: 0.98;
   margin-top: -0.25rem;
+  text-wrap: balance;
+  max-width: 18ch;
 }
 
 .hero__lede {
